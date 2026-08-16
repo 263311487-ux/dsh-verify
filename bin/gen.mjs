@@ -205,5 +205,7 @@ options:
   console.log(`next: review ${out}, then run: dsh-verify --spec ${out}`);
 }
 
-const isMain = process.argv[1] && (await import('node:path')).resolve(process.argv[1]) === (await import('node:url')).fileURLToPath(import.meta.url);
+import { realpathSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+const isMain = process.argv[1] && realpathSync(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isMain) main().catch((e) => { console.error(`gen: ${e.message}`); process.exit(1); });

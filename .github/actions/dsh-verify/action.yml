@@ -1,0 +1,64 @@
+name: 'dsh-verify'
+description: >-
+  Independent browser acceptance testing for agent deliverables.
+  Agents self-test and pass; real browsers tell the truth.
+branding:
+  icon: 'check-circle'
+  color: 'green'
+inputs:
+  spec:
+    description: 'Acceptance spec JSON file or glob (required), e.g. demo/fixed.json or specs/*.json'
+    required: true
+  out:
+    description: 'Output dir for report.html + screenshots'
+    required: false
+    default: 'dsh-verify-out'
+  url:
+    description: 'Optional target URL override (spec.base / step paths ignored)'
+    required: false
+  install-browser:
+    description: 'Install Chromium if missing (set "false" if your runner already caches it)'
+    required: false
+    default: 'true'
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22
+
+    - name: Install dsh-verify (isolated, does not touch your project)
+      shell: bash
+      run: |
+        mkdir -p "$RUNNER_TEMP/dsh-verify"
+        cd "$RUNNER_TEMP/dsh-verify"
+        if [ ! -f package.json ]; then npm init -y >/dev/null 2>&1; fi
+        npm install --no-audit --no-fund dsh-verify@latest
+
+    - name: Install Chromium
+      if: ${{ inputs.install-browser == 'true' }}
+      shell: bash
+      run: |
+        cd "$RUNNER_TEMP/dsh-verify"
+        npx playwright install --with-deps chromium
+
+    - name: Run acceptance checks
+      shell: bash
+      run: |
+        set -e
+        BIN="$RUNNER_TEMP/dsh-verify/node_modules/.bin/dsh-verify"
+        SPEC="${{ inputs.spec }}"
+        OUT="${{ inputs.out }}"
+        URL="${{ inputs.url }}"
+        args=(--spec "$SPEC" --out "$OUT")
+        if [ -n "$URL" ]; then args+=(--url "$URL"); fi
+        "$BIN" "${args[@]}"
+
+    - name: Upload report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: dsh-verify-report
+        path: ${{ inputs.out }}
+        if-no-files-found: ignore

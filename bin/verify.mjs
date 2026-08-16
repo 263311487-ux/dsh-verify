@@ -278,5 +278,6 @@ async function main() {
   process.exit(allOk ? 0 : 1);
 }
 
-const isMain = process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+import { realpathSync } from 'node:fs';
+const isMain = process.argv[1] && realpathSync(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isMain) main().catch((e) => { console.error(e); process.exit(1); });

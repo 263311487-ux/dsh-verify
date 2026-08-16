@@ -1,0 +1,32 @@
+name: dogfood-action
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  action:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: fixed build must PASS via the action
+        uses: ./.github/actions/dsh-verify
+        with:
+          spec: demo/fixed.json
+          out: dsh-verify-out-fixed
+
+      - name: buggy build should FAIL via the action (detection proof)
+        id: buggy
+        continue-on-error: true
+        uses: ./.github/actions/dsh-verify
+        with:
+          spec: demo/buggy.json
+          out: dsh-verify-out-buggy
+
+      - name: assert the buggy build was caught
+        if: steps.buggy.outcome != 'failure'
+        run: |
+          echo "expected the action to fail on the buggy build"
+          exit 1
