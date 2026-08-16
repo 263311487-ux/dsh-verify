@@ -1,5 +1,7 @@
 # dsh-verify
 
+[![ci](https://github.com/263311487-ux/dsh-verify/actions/workflows/ci.yml/badge.svg)](https://github.com/263311487-ux/dsh-verify/actions/workflows/ci.yml)
+
 > **Agents self-test and pass. Real browsers tell the truth.**
 
 `dsh-verify` is a tiny, dependency-light acceptance tester for **agent-delivered web artifacts**. You write a JSON spec of what a human would check in a browser; it launches a real headless Chromium, clicks, reads computed styles, and produces an HTML report plus a `0/1` exit code.
@@ -47,6 +49,19 @@ npx playwright install chromium   # one-time browser download
 # Run the two demo specs back to back
 npm run demo:buggy                # → FAIL (exit 1) — missing .dark style caught
 npm run demo:fixed                # → PASS (exit 0)
+
+# engine self-tests + full CI flow
+npm test                          # node:test suite
+npm run ci                        # tests + fixed PASS + buggy FAIL (as proof of detection)
+```
+
+The repo's own CI runs exactly that: engine self-tests, then asserts the fixed build **passes** and the buggy build **fails** — so the tool verifies itself on every push (`.github/workflows/ci.yml`).
+
+### Machine-readable output
+
+```bash
+node bin/verify.mjs --spec demo/fixed.json --out /tmp/out --json
+# {"verdict":"PASS","passed":11,"total":11,"failed":[],"report":"/tmp/out/report.html"}
 ```
 
 ## Spec format
@@ -81,6 +96,8 @@ npm run demo:fixed                # → PASS (exit 0)
 | `capture_style` | `selector`, `prop`, `var` | Snapshot a **computed style** into a variable |
 | `expect_style_changed` | `selector`, `prop`, `var` | Computed style differs from the snapshot — the check that catches "class toggled but CSS never written" |
 | `expect_url_contains` | `text` | Current URL contains target |
+| `expect_console_errors` | `present?` | No console errors during the run (default: expect none) |
+| `expect_network_errors` | `present?` | No 4xx/5xx responses or failed requests (default: expect none) |
 | `screenshot` | `name`, `full?` | Save a PNG into the report |
 
 The `capture_style` → `expect_style_changed` pair is the heart of this project: it verifies **what the user sees**, not what the DOM class list says.
@@ -108,11 +125,11 @@ None of them run a real browser against the artifact and answer: *"When I click 
 
 ## Roadmap
 
-- `expect_console` — no `console.error` / page errors
-- `assert` on network requests (404s)
-- Multi-page flows and `expect_navigation`
-- Compact JSON output for CI logs
-- Docker image with pinned Chromium
+- [x] `expect_console_errors` / `expect_network_errors` — no console errors, no 4xx/failed requests
+- [x] `--json` verdict output for CI logs; failed steps printed to stdout
+- [ ] Multi-page flows and `expect_navigation`
+- [ ] `--spec` glob (run many specs, one summary)
+- [ ] Docker image with pinned Chromium
 
 ## License
 

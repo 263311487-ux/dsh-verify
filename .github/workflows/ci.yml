@@ -1,0 +1,40 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: install chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: engine self-tests
+        run: npm test
+
+      - name: fixed build must PASS
+        run: npm run demo:fixed
+
+      - name: buggy build must FAIL (exit 1)
+        run: |
+          set +e
+          npm run demo:buggy
+          code=$?
+          set -e
+          if [ "$code" -ne 1 ]; then
+            echo "expected exit 1, got $code"
+            exit 1
+          fi
+          echo "buggy build correctly failed as expected"

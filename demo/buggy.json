@@ -2,14 +2,57 @@
   "title": "dsh-web-team demo · buggy build (missing .dark style) — must FAIL",
   "serve": "demo/buggy",
   "steps": [
-    { "action": "goto", "path": "/index.html" },
-    { "action": "click", "selector": "#count-btn", "count": 3 },
-    { "action": "expect_text", "selector": "#count-btn", "text": "Clicked: 3" },
-    { "action": "capture_style", "selector": "#page", "prop": "backgroundColor", "var": "bg_before" },
-    { "action": "click", "selector": "#color-btn" },
-    { "action": "expect_class", "selector": "#page", "class": "dark", "present": true },
-    { "action": "wait", "ms": 500 },
-    { "action": "expect_style_changed", "selector": "#page", "prop": "backgroundColor", "var": "bg_before" },
-    { "action": "screenshot", "name": "final-state" }
+    {
+      "action": "goto",
+      "path": "/index.html"
+    },
+    {
+      "action": "click",
+      "selector": "#count-btn",
+      "count": 3
+    },
+    {
+      "action": "expect_text",
+      "selector": "#count-btn",
+      "text": "Clicked: 3"
+    },
+    {
+      "action": "capture_style",
+      "selector": "#page",
+      "prop": "backgroundColor",
+      "var": "bg_before"
+    },
+    {
+      "action": "click",
+      "selector": "#color-btn"
+    },
+    {
+      "action": "expect_class",
+      "selector": "#page",
+      "class": "dark",
+      "present": true
+    },
+    {
+      "action": "wait",
+      "ms": 500
+    },
+    {
+      "action": "expect_style_changed",
+      "selector": "#page",
+      "prop": "backgroundColor",
+      "var": "bg_before"
+    },
+    {
+      "action": "expect_console_errors",
+      "present": false
+    },
+    {
+      "action": "expect_network_errors",
+      "present": false
+    },
+    {
+      "action": "screenshot",
+      "name": "final-state"
+    }
   ]
 }

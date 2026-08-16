@@ -1,14 +1,37 @@
 {
   "name": "dsh-verify",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Independent browser acceptance testing for agent deliverables. Agents self-test and pass; real browsers tell the truth.",
+  "keywords": [
+    "agent",
+    "agents",
+    "verification",
+    "acceptance-testing",
+    "e2e",
+    "playwright",
+    "headless",
+    "ai",
+    "ci"
+  ],
   "type": "module",
   "bin": {
     "dsh-verify": "bin/verify.mjs"
   },
+  "files": [
+    "bin/"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/263311487-ux/dsh-verify.git"
+  },
   "scripts": {
+    "test": "node --test",
     "demo:buggy": "node bin/verify.mjs --spec demo/buggy.json --out /tmp/dshv-buggy",
-    "demo:fixed": "node bin/verify.mjs --spec demo/fixed.json --out /tmp/dshv-fixed"
+    "demo:fixed": "node bin/verify.mjs --spec demo/fixed.json --out /tmp/dshv-fixed",
+    "ci": "npm test && node bin/verify.mjs --spec demo/fixed.json --out /tmp/dshv-ci-fixed && ! node bin/verify.mjs --spec demo/buggy.json --out /tmp/dshv-ci-buggy"
   },
   "dependencies": {
     "playwright": "^1.62.1"

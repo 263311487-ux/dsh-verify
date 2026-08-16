@@ -8,6 +8,26 @@ import { extname, join, resolve, dirname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
+const HELP = `dsh-verify — independent browser acceptance testing for agent deliverables
+Agents self-test and pass. Real browsers tell the truth.
+
+usage: dsh-verify --spec <spec.json> [options]
+
+options:
+  --spec <file>   JSON acceptance spec (required)
+  --out <dir>     output dir for report.html + screenshots (default: ./dsh-verify-out)
+  --url <url>     target URL; overrides spec.serve / spec.base / step path
+  --headed        run with a visible browser
+  --json          print a machine-readable verdict object to stdout
+  --help          show this help
+
+actions:
+  goto wait click fill expect_text expect_class capture_style
+  expect_style_changed expect_url_contains screenshot
+  expect_console_errors expect_network_errors
+
+docs: https://github.com/263311487-ux/dsh-verify
+`;
 const MIME = { '.html':'text/html', '.htm':'text/html', '.js':'text/javascript', '.mjs':'text/javascript', '.css':'text/css', '.json':'application/json', '.png':'image/png', '.jpg':'image/jpeg', '.jpeg':'image/jpeg', '.gif':'image/gif', '.svg':'image/svg+xml', '.ico':'image/x-icon', '.txt':'text/plain', '.md':'text/markdown', '.woff2':'font/woff2', '.pdf':'application/pdf' };
 
 function arg(name, dflt) {
@@ -39,12 +59,13 @@ async function serveDir(dir) {
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 async function main() {
+  if (has('help')) { process.stdout.write(HELP); process.exit(0); }
   const specPath = arg('spec');
-  if (!specPath) { console.error('usage: dsh-verify --spec <spec.json> [--out dir] [--url url] [--headed]'); process.exit(2); }
+  if (!specPath) { process.stdout.write(HELP); process.exit(2); }
   const spec = JSON.parse(await readFile(specPath, 'utf8'));
   const outDir = resolve(arg('out', 'dsh-verify-out'));
   const served = spec.serve ? await serveDir(spec.serve) : null;
-  const base = served ? served.url : (spec.base || 'http://localhost');
+  const base = served ? served.url : (arg('url') || spec.base || 'http://localhost');
   const results = [];
   let browser = null;
 
@@ -54,7 +75,12 @@ async function main() {
   try {
     browser = await chromium.launch({ headless: !has('headed') });
     const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+    const consoleErrors = [];
+    const networkErrors = [];
     page.on('pageerror', (e) => { results.push({ action: 'pageerror', ok: false, detail: String(e) }); });
+    page.on('console', (m) => { if (m.type() === 'error') consoleErrors.push(m.text()); });
+    page.on('response', (r) => { if (r.status() >= 400) networkErrors.push(`${r.status()} ${r.url()}`); });
+    page.on('requestfailed', (r) => { networkErrors.push(`failed ${r.url()}`); });
 
     for (const step of spec.steps || []) {
       const a = step.action;
@@ -102,6 +128,16 @@ async function main() {
         else if (a === 'expect_url_contains') {
           const ok = page.url().includes(step.text);
           (ok ? pass : fail)(step, page.url());
+        }
+        else if (a === 'expect_console_errors') {
+          const want = step.present !== false;
+          const hasErr = consoleErrors.length > 0;
+          (hasErr === want ? pass : fail)(step, hasErr ? consoleErrors.slice(0, 3).join(' | ') : 'no console errors');
+        }
+        else if (a === 'expect_network_errors') {
+          const want = step.present !== false;
+          const hasErr = networkErrors.length > 0;
+          (hasErr === want ? pass : fail)(step, hasErr ? networkErrors.slice(0, 3).join(' | ') : 'no failed requests');
         }
         else fail(step, `unknown action "${a}"`);
       } catch (e) {
@@ -158,7 +194,14 @@ ${rows}
 
   await writeFile(join(outDir, 'report.html'), html);
   const verdict = ok ? 'PASS' : 'FAIL';
-  console.log(`\ndsh-verify: ${verdict} (${passed}/${total})\nreport: ${join(outDir, 'report.html')}`);
+  const failed = results.filter((r) => !r.ok).map((r) => ({ action: r.action, selector: r.selector || null, detail: r.detail || null }));
+  if (has('json')) {
+    process.stdout.write(JSON.stringify({ verdict, passed, total, failed, report: join(outDir, 'report.html') }) + '\n');
+  } else {
+    console.log(`\ndsh-verify: ${verdict} (${passed}/${total})`);
+    for (const f of failed) console.log(`  ❌ ${f.action}${f.selector ? ' ' + f.selector : ''}: ${f.detail}`);
+    console.log(`report: ${join(outDir, 'report.html')}`);
+  }
   process.exit(ok ? 0 : 1);
 }
 
