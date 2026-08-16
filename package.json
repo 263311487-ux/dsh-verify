@@ -31,7 +31,8 @@
     "test": "node --test",
     "demo:buggy": "node bin/verify.mjs --spec demo/buggy.json --out /tmp/dshv-buggy",
     "demo:fixed": "node bin/verify.mjs --spec demo/fixed.json --out /tmp/dshv-fixed",
-    "ci": "npm test && node bin/verify.mjs --spec demo/fixed.json --out /tmp/dshv-ci-fixed && ! node bin/verify.mjs --spec demo/buggy.json --out /tmp/dshv-ci-buggy"
+    "ci": "npm test && node bin/verify.mjs --spec demo/fixed.json --out /tmp/dshv-ci-fixed && ! node bin/verify.mjs --spec demo/buggy.json --out /tmp/dshv-ci-buggy",
+    "prepublishOnly": "npm test"
   },
   "dependencies": {
     "playwright": "^1.62.1"
