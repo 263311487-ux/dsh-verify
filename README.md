@@ -187,6 +187,19 @@ Each spec gets its own `reports/<name>/` folder; exit is `0` only if **all** pas
 
 ## Spec format
 
+Top-level fields: `title`, `serve` (static dir), `base` (target URL), `browser` (optional: `chromium` | `firefox` | `webkit`, default `chromium`), `steps`.
+
+```json
+{
+  "title": "my app",
+  "serve": "dist",
+  "browser": "chromium",
+  "steps": []
+}
+```
+
+Override per run with `--browser firefox`.
+
 ```json
 {
   "title": "my acceptance check",
@@ -268,7 +281,8 @@ None of them run a real browser against the artifact and answer: *"When I click 
 - [x] AI-drafted checklists — `dsh-verify gen` (LLM drafts, deterministic browser enforces)
 - [x] GitHub Action — one-step CI acceptance with report artifact
 - [x] Visual regression — pixel-level screenshot baselines (`capture_baseline` / `expect_screenshot`)
-- [ ] Multi-browser matrix (firefox / webkit) and mobile viewports
+- [x] Multi-browser matrix — `--browser` / `spec.browser`: chromium, firefox, webkit (all green in CI)
+- [ ] Mobile viewports
 - [ ] AI spec generation from a natural-language requirement without a running page
 
 ## License

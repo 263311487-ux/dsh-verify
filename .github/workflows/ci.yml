@@ -18,8 +18,8 @@ jobs:
 
       - run: npm ci
 
-      - name: install chromium
-        run: npx playwright install --with-deps chromium
+      - name: install browsers
+        run: npx playwright install --with-deps chromium firefox webkit
 
       - name: engine self-tests
         run: npm test

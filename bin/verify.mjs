@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // dsh-verify — independent browser acceptance testing for agent deliverables.
 // Agents self-test and pass; real browsers tell the truth.
-import { chromium } from 'playwright';
+import { chromium, firefox, webkit } from 'playwright';
 import { readFile, writeFile, mkdir, readdir, stat } from 'node:fs/promises';
 import pngjs from 'pngjs';
 const { PNG } = pngjs;
@@ -20,6 +20,7 @@ options:
   --out <dir>     output dir for report.html + screenshots (default: ./dsh-verify-out)
   --url <url>     target URL; overrides spec.serve / spec.base / step path
   --headed        run with a visible browser
+  --browser <b>   chromium | firefox | webkit (default: chromium; overrides spec.browser)
   --update-baselines  refresh screenshot baselines instead of failing
   --json          print a machine-readable verdict object to stdout
   --help          show this help
@@ -124,8 +125,12 @@ async function snap(page, step) {
   return page.screenshot({ fullPage: step.full !== false });
 }
 
-export async function runOne(specPath, outDir, { headed, url, updateBaselines } = {}) {
+const BROWSERS = { chromium, firefox, webkit };
+
+export async function runOne(specPath, outDir, { headed, url, updateBaselines, browser: browserName } = {}) {
   const spec = JSON.parse(await readFile(specPath, 'utf8'));
+  const engine = BROWSERS[browserName || spec.browser || 'chromium'];
+  if (!engine) throw new Error(`unknown browser "${browserName || spec.browser}" (chromium | firefox | webkit)`);
   const served = spec.serve ? await serveDir(spec.serve) : null;
   const base = served ? served.url : (url || spec.base || 'http://localhost');
   const results = [];
@@ -135,7 +140,7 @@ export async function runOne(specPath, outDir, { headed, url, updateBaselines } 
   const pass = (step, detail) => results.push({ ...step, ok: true, detail: detail || 'ok' });
 
   try {
-    browser = await chromium.launch({ headless: !headed });
+    browser = await engine.launch({ headless: !headed });
     const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
     const consoleErrors = [];
     const networkErrors = [];
@@ -321,7 +326,7 @@ async function main() {
 
   for (const sp of specPaths) {
     const specOut = multi ? join(outDir, basename(sp).replace(/\.json$/, '')) : outDir;
-    const r = await runOne(sp, specOut, { headed: has('headed'), url: arg('url'), updateBaselines: has('update-baselines') });
+    const r = await runOne(sp, specOut, { headed: has('headed'), url: arg('url'), updateBaselines: has('update-baselines'), browser: arg('browser') });
     results.push(r);
     if (multi) {
       console.log(`${r.ok ? '[PASS]' : '[FAIL]'} ${sp} (${r.passed}/${r.total})`);
