@@ -23,11 +23,15 @@ Our reproduction of the failure chain:
 
 The gap is structural, not a skill issue: agent teams verify against a shared belief, not against the user's experience. The only fix is an **independent** check that does not share the team's blind spots.
 
-## What dsh-verify does
+## What dsh-verify does (now)
 
 - JSON spec, no framework: `goto` → `click` → `expect_text` → `capture_style` → `expect_style_changed`
 - Real Chromium via Playwright (headless by default)
 - Verifies **computed styles**, not DOM class lists — the check that catches "class toggled but CSS never written"
+- **Visual regression**: pixel-level screenshot baselines (`expect_screenshot`) with red-highlight diff images
+- **AI-drafted checklists**: `dsh-verify gen --url <url> --run` — LLM drafts, deterministic browser enforces (the AI never judges)
+- **MCP server** for Claude Code / Cursor / Copilot: `verify_spec`, `verify_url`, `generate_and_verify`
+- **GitHub Action** for one-step CI acceptance with report artifact
 - HTML report with screenshots, exit code 0/1, `--json` for CI
 
 The check that would have caught our bug:
@@ -70,5 +74,5 @@ npm run demo:fixed   # PASS
 ## Ask
 
 - Do you run acceptance checks on agent-delivered web artifacts today? How?
-- What's the next check that should be in the box? (We have `expect_console_errors`, network-404 assertions, `--json` output planned)
+- What's the next check that should be in the box? (On the roadmap: firefox/webkit matrix, mobile viewports, natural-language spec generation without a running page)
 - If you've hit the same "self-test green, browser red" wall, tell the story — we want receipts in the README.
