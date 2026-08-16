@@ -36,8 +36,9 @@ test('--json emits a machine-readable verdict', () => {
   const out = JSON.parse(r.stdout.trim().split('\n').pop());
   assert.equal(out.verdict, 'PASS');
   assert.equal(out.passed, out.total);
-  assert.equal(out.failed.length, 0);
-  assert.match(out.report, /report\.html$/);
+  assert.equal(out.specs.length, 1);
+  assert.equal(out.specs[0].failed.length, 0);
+  assert.match(out.specs[0].report, /report\.html$/);
 });
 
 test('no args prints help and exits 2', () => {
@@ -50,4 +51,22 @@ test('--help exits 0', () => {
   const r = run(['--help']);
   assert.equal(r.status, 0);
   assert.match(r.stdout, /actions:/);
+});
+
+test('expect_navigation follows a link to a second page', () => {
+  const r = run(['--spec', 'test/fixtures/nav/nav-spec.json', '--out', mkdtempSync(join(tmpdir(), 'dshv-t-'))]);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.match(r.stdout, /PASS \(4\/4\)/);
+});
+
+test('glob runs many specs and aggregates a FAIL when any fails', () => {
+  const r = run(['--spec', 'demo/*.json', '--out', mkdtempSync(join(tmpdir(), 'dshv-t-')), '--json']);
+  assert.equal(r.status, 1);
+  const out = JSON.parse(r.stdout.trim().split('\n').pop());
+  assert.equal(out.verdict, 'FAIL');
+  assert.equal(out.total, 2);
+  assert.equal(out.passed, 1);
+  const names = out.specs.map((s) => s.name);
+  assert.ok(names.includes('buggy.json'));
+  assert.ok(names.includes('fixed.json'));
 });

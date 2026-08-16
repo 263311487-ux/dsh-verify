@@ -64,6 +64,17 @@ node bin/verify.mjs --spec demo/fixed.json --out /tmp/out --json
 # {"verdict":"PASS","passed":11,"total":11,"failed":[],"report":"/tmp/out/report.html"}
 ```
 
+## Running many specs
+
+```bash
+node bin/verify.mjs --spec 'specs/*.json' --out reports/
+# [PASS] specs/home.json (5/5)
+# [FAIL] specs/cart.json (4/5)
+#   ❌ expect_text #total: got "0" want "99"
+```
+
+Each spec gets its own `reports/<name>/` folder; exit is `0` only if **all** pass.
+
 ## Spec format
 
 ```json
@@ -96,6 +107,7 @@ node bin/verify.mjs --spec demo/fixed.json --out /tmp/out --json
 | `capture_style` | `selector`, `prop`, `var` | Snapshot a **computed style** into a variable |
 | `expect_style_changed` | `selector`, `prop`, `var` | Computed style differs from the snapshot — the check that catches "class toggled but CSS never written" |
 | `expect_url_contains` | `text` | Current URL contains target |
+| `expect_navigation` | `to`, `timeout?` | Wait until the URL contains `to` (e.g. after clicking a link) |
 | `expect_console_errors` | `present?` | No console errors during the run (default: expect none) |
 | `expect_network_errors` | `present?` | No 4xx/5xx responses or failed requests (default: expect none) |
 | `screenshot` | `name`, `full?` | Save a PNG into the report |
@@ -114,6 +126,15 @@ Fixed build — toggle clicked, theme flipped:
 
 Full step-by-step reports: [buggy report](evidence/buggy-report.html) · [fixed report](evidence/fixed-report.html).
 
+## Docker (pinned Chromium)
+
+```bash
+docker build -t dsh-verify .
+docker run --rm -v "$PWD:/app" dsh-verify --spec demo/fixed.json --out /app/reports
+```
+
+Uses `mcr.microsoft.com/playwright:v1.62.1-jammy` so the Chromium build matches the Playwright version — no browser download at image build time. (Built and documented; verified locally, not on a Docker host yet.)
+
 ## Why nothing else does this
 
 We researched the agent-tooling community before building. Existing "verification" for agent deliverables is mostly:
@@ -127,9 +148,9 @@ None of them run a real browser against the artifact and answer: *"When I click 
 
 - [x] `expect_console_errors` / `expect_network_errors` — no console errors, no 4xx/failed requests
 - [x] `--json` verdict output for CI logs; failed steps printed to stdout
-- [ ] Multi-page flows and `expect_navigation`
-- [ ] `--spec` glob (run many specs, one summary)
-- [ ] Docker image with pinned Chromium
+- [x] Multi-page flows and `expect_navigation` (wait for URL after click)
+- [x] `--spec` glob (run many specs, one aggregated verdict)
+- [x] Docker image with pinned Chromium (`mcr.microsoft.com/playwright:v1.62.1-jammy`)
 
 ## License
 

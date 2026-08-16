@@ -4,17 +4,17 @@
 import { chromium } from 'playwright';
 import { readFile, writeFile, mkdir, readdir, stat } from 'node:fs/promises';
 import { createServer } from 'node:http';
-import { extname, join, resolve, dirname, basename } from 'node:path';
+import { extname, join, resolve, dirname, basename, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
 const HELP = `dsh-verify — independent browser acceptance testing for agent deliverables
 Agents self-test and pass. Real browsers tell the truth.
 
-usage: dsh-verify --spec <spec.json> [options]
+usage: dsh-verify --spec <spec.json|glob> [options]
 
 options:
-  --spec <file>   JSON acceptance spec (required)
+  --spec <file>   JSON acceptance spec; supports globs like "specs/*.json" (required)
   --out <dir>     output dir for report.html + screenshots (default: ./dsh-verify-out)
   --url <url>     target URL; overrides spec.serve / spec.base / step path
   --headed        run with a visible browser
@@ -23,11 +23,12 @@ options:
 
 actions:
   goto wait click fill expect_text expect_class capture_style
-  expect_style_changed expect_url_contains screenshot
-  expect_console_errors expect_network_errors
+  expect_style_changed expect_url_contains expect_navigation
+  expect_console_errors expect_network_errors screenshot
 
 docs: https://github.com/263311487-ux/dsh-verify
 `;
+
 const MIME = { '.html':'text/html', '.htm':'text/html', '.js':'text/javascript', '.mjs':'text/javascript', '.css':'text/css', '.json':'application/json', '.png':'image/png', '.jpg':'image/jpeg', '.jpeg':'image/jpeg', '.gif':'image/gif', '.svg':'image/svg+xml', '.ico':'image/x-icon', '.txt':'text/plain', '.md':'text/markdown', '.woff2':'font/woff2', '.pdf':'application/pdf' };
 
 function arg(name, dflt) {
@@ -35,6 +36,41 @@ function arg(name, dflt) {
   return i !== -1 && process.argv[i + 1] ? process.argv[i + 1] : dflt;
 }
 const has = (name) => process.argv.includes('--' + name);
+
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function globToRegExp(glob) {
+  let out = '';
+  for (let i = 0; i < glob.length; i++) {
+    const c = glob[i];
+    if (c === '*') {
+      if (glob[i + 1] === '*') { i++; if (glob[i + 1] === '/') i++; out += '(?:.*/)?'; }
+      else out += '[^/]*';
+    } else if (c === '?') out += '[^/]';
+    else if ('\\^$.|+()[]{}'.includes(c)) out += '\\' + c;
+    else out += c;
+  }
+  return new RegExp('^' + out + '$');
+}
+
+async function expandSpecPaths(pattern) {
+  if (!/[*?[]/.test(pattern)) return [pattern];
+  const rx = globToRegExp(pattern);
+  const star = pattern.indexOf('*');
+  const root = pattern.slice(0, star).split(sep).slice(0, -1).join(sep) || '.';
+  const found = [];
+  async function walk(dir) {
+    let entries;
+    try { entries = await readdir(dir, { withFileTypes: true }); } catch { return; }
+    for (const e of entries) {
+      const p = join(dir, e.name);
+      if (e.isDirectory()) await walk(p);
+      else if (rx.test(p)) found.push(p);
+    }
+  }
+  await walk(root);
+  return found.sort();
+}
 
 async function serveDir(dir) {
   const root = resolve(dir);
@@ -56,16 +92,10 @@ async function serveDir(dir) {
   return { url: `http://127.0.0.1:${server.address().port}`, close: () => server.close() };
 }
 
-function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-async function main() {
-  if (has('help')) { process.stdout.write(HELP); process.exit(0); }
-  const specPath = arg('spec');
-  if (!specPath) { process.stdout.write(HELP); process.exit(2); }
+async function runOne(specPath, outDir, { headed, url }) {
   const spec = JSON.parse(await readFile(specPath, 'utf8'));
-  const outDir = resolve(arg('out', 'dsh-verify-out'));
   const served = spec.serve ? await serveDir(spec.serve) : null;
-  const base = served ? served.url : (arg('url') || spec.base || 'http://localhost');
+  const base = served ? served.url : (url || spec.base || 'http://localhost');
   const results = [];
   let browser = null;
 
@@ -73,7 +103,7 @@ async function main() {
   const pass = (step, detail) => results.push({ ...step, ok: true, detail: detail || 'ok' });
 
   try {
-    browser = await chromium.launch({ headless: !has('headed') });
+    browser = await chromium.launch({ headless: !headed });
     const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
     const consoleErrors = [];
     const networkErrors = [];
@@ -117,17 +147,16 @@ async function main() {
           const now = await page.locator(step.selector).first().evaluate((el, prop) => getComputedStyle(el)[prop], step.prop);
           (before !== now ? pass : fail)(step, `before "${before}" now "${now}"`);
         }
-        else if (a === 'screenshot') {
-          const png = await page.screenshot({ fullPage: step.full !== false });
-          const name = (step.name || `shot-${results.length}`).replace(/[^\w.-]/g, '_');
-          await mkdir(outDir, { recursive: true });
-          const fp = join(outDir, name + '.png');
-          await writeFile(fp, png);
-          pass(step, name + '.png');
-        }
         else if (a === 'expect_url_contains') {
           const ok = page.url().includes(step.text);
           (ok ? pass : fail)(step, page.url());
+        }
+        else if (a === 'expect_navigation') {
+          if (!step.to) fail(step, 'expect_navigation needs "to"');
+          else {
+            await page.waitForURL((u) => u.toString().includes(step.to), { timeout: step.timeout || 5000 });
+            pass(step, page.url());
+          }
         }
         else if (a === 'expect_console_errors') {
           const want = step.present !== false;
@@ -138,6 +167,14 @@ async function main() {
           const want = step.present !== false;
           const hasErr = networkErrors.length > 0;
           (hasErr === want ? pass : fail)(step, hasErr ? networkErrors.slice(0, 3).join(' | ') : 'no failed requests');
+        }
+        else if (a === 'screenshot') {
+          const png = await page.screenshot({ fullPage: step.full !== false });
+          const name = (step.name || `shot-${results.length}`).replace(/[^\w.-]/g, '_');
+          await mkdir(outDir, { recursive: true });
+          const fp = join(outDir, name + '.png');
+          await writeFile(fp, png);
+          pass(step, name + '.png');
         }
         else fail(step, `unknown action "${a}"`);
       } catch (e) {
@@ -193,16 +230,48 @@ ${rows}
 </div></body></html>`;
 
   await writeFile(join(outDir, 'report.html'), html);
-  const verdict = ok ? 'PASS' : 'FAIL';
   const failed = results.filter((r) => !r.ok).map((r) => ({ action: r.action, selector: r.selector || null, detail: r.detail || null }));
-  if (has('json')) {
-    process.stdout.write(JSON.stringify({ verdict, passed, total, failed, report: join(outDir, 'report.html') }) + '\n');
-  } else {
-    console.log(`\ndsh-verify: ${verdict} (${passed}/${total})`);
-    for (const f of failed) console.log(`  ❌ ${f.action}${f.selector ? ' ' + f.selector : ''}: ${f.detail}`);
-    console.log(`report: ${join(outDir, 'report.html')}`);
+  return { name: basename(specPath), ok, passed, total, failed, report: join(outDir, 'report.html') };
+}
+
+function printFailed(f) {
+  for (const x of f) console.log(`  ❌ ${x.action}${x.selector ? ' ' + x.selector : ''}: ${x.detail}`);
+}
+
+async function main() {
+  if (has('help')) { process.stdout.write(HELP); process.exit(0); }
+  const pattern = arg('spec');
+  if (!pattern) { process.stdout.write(HELP); process.exit(2); }
+  const specPaths = await expandSpecPaths(pattern);
+  if (specPaths.length === 0) { console.error(`no specs matched: ${pattern}`); process.exit(2); }
+  const outDir = resolve(arg('out', 'dsh-verify-out'));
+  const multi = specPaths.length > 1;
+  const results = [];
+
+  for (const sp of specPaths) {
+    const specOut = multi ? join(outDir, basename(sp).replace(/\.json$/, '')) : outDir;
+    const r = await runOne(sp, specOut, { headed: has('headed'), url: arg('url') });
+    results.push(r);
+    if (multi) {
+      console.log(`${r.ok ? '[PASS]' : '[FAIL]'} ${sp} (${r.passed}/${r.total})`);
+      if (!r.ok) printFailed(r.failed);
+    } else {
+      console.log(`\ndsh-verify: ${r.ok ? 'PASS' : 'FAIL'} (${r.passed}/${r.total})`);
+      if (!r.ok) printFailed(r.failed);
+      console.log(`report: ${r.report}`);
+    }
   }
-  process.exit(ok ? 0 : 1);
+
+  const allOk = results.length > 0 && results.every((r) => r.ok);
+  if (has('json')) {
+    process.stdout.write(JSON.stringify({
+      verdict: allOk ? 'PASS' : 'FAIL',
+      specs: results.map((r) => ({ name: r.name, verdict: r.ok ? 'PASS' : 'FAIL', passed: r.passed, total: r.total, failed: r.failed, report: r.report })),
+      passed: results.filter((r) => r.ok).length,
+      total: results.length,
+    }) + '\n');
+  }
+  process.exit(allOk ? 0 : 1);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

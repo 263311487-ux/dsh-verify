@@ -1,0 +1,10 @@
+{
+  "title": "navigation fixture",
+  "serve": "test/fixtures/nav",
+  "steps": [
+    { "action": "goto", "path": "/index.html" },
+    { "action": "click", "selector": "#next" },
+    { "action": "expect_navigation", "to": "page2.html" },
+    { "action": "expect_text", "selector": "#p2", "text": "Page Two" }
+  ]
+}
