@@ -1,7 +1,7 @@
 {
   "name": "dsh-verify",
-  "version": "0.5.2",
-  "description": "Independent browser acceptance testing for agent deliverables. Agents self-test and pass; real browsers tell the truth. CLI + MCP server.",
+  "version": "0.6.0",
+  "description": "Independent browser acceptance testing for agent deliverables. CLI + MCP + AI-drafted checklists; agents self-test and pass, real browsers tell the truth.",
   "keywords": [
     "agent",
     "agents",

@@ -46,11 +46,12 @@ after(async () => {
 
 const out = join(tmpdir(), `dshv-mcp-test-${Date.now()}`);
 
-test('tools/list exposes verify_spec, verify_url, health', async () => {
+test('tools/list exposes verify_spec, verify_url, generate_and_verify, health', async () => {
   const { tools } = await client.listTools();
   const names = tools.map((t) => t.name);
   assert.ok(names.includes('verify_spec'));
   assert.ok(names.includes('verify_url'));
+  assert.ok(names.includes('generate_and_verify'));
   assert.ok(names.includes('health'));
 });
 

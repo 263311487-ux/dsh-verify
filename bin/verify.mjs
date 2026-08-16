@@ -239,6 +239,10 @@ function printFailed(f) {
 }
 
 async function main() {
+  if (process.argv[2] === 'gen') {
+    const { main: genMain } = await import('./gen.mjs');
+    return genMain();
+  }
   if (has('help')) { process.stdout.write(HELP); process.exit(0); }
   const pattern = arg('spec');
   if (!pattern) { process.stdout.write(HELP); process.exit(2); }

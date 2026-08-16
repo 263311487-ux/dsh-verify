@@ -77,9 +77,32 @@ Tools exposed by the MCP server:
 |---|---|
 | `verify_spec` | Run an existing spec JSON file (or glob) against real Chromium |
 | `verify_url` | Verify a live URL against an inline list of checks — no files needed |
+| `generate_and_verify` | AI drafts the checklist from the live page + your requirements, then real Chromium executes it |
 | `health` | Confirm the server and Chromium are ready |
 
 No LLM judges the outcome — the browser is the judge. That's the whole point.
+
+## AI-drafted checklists (LLM writes them, a real browser enforces them)
+
+Don't want to hand-write the JSON? `dsh-verify gen` learns the page in a real browser, has an LLM draft the checklist against your requirements, then executes it in real Chromium:
+
+```bash
+export DEEPSEEK_API_KEY=sk-...   # or pass --api-key / --provider openai
+
+dsh-verify gen --url http://localhost:3000 \
+  --prompt "dark-mode toggle must actually change the background color" \
+  --run
+```
+
+```text
+gen: opening http://localhost:3000 in a real browser to learn the page...
+gen: page learned (2 buttons, 0 inputs) — drafting checklist...
+gen: checklist drafted by deepseek-v4-flash (10 steps) -> dsh-verify.gen.json
+gen: executed in real browser -> PASS (10/10)
+report: dsh-verify-out/report.html
+```
+
+The AI only **drafts** the checklist — it never judges the outcome. The same deterministic Chromium engine runs the steps, and the JSON is written to disk so you can review or edit it before trusting it.
 
 Requires Node >= 18 and one browser install: `npx playwright install chromium`.
 

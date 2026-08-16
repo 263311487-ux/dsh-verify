@@ -9,6 +9,7 @@ import {
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import { runOne } from '../bin/verify.mjs';
+import { extractPageFacts, generateSpec } from '../bin/gen.mjs';
 import { writeFile, mkdtemp, access } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -67,6 +68,24 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
       },
     },
     {
+      name: 'generate_and_verify',
+      description:
+        'AI-drafts an acceptance checklist for a URL (LLM writes it, a real browser executes it), then immediately runs it in real Chromium. ' +
+        'Pass requirements as a plain-language description of what a human QA should verify (e.g. "dark-mode toggle changes the background color"). ' +
+        'Requires DEEPSEEK_API_KEY or OPENAI_API_KEY in the server environment. Returns the drafted spec path plus the PASS/FAIL verdict, per-step results and report path.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          url: { type: 'string', description: 'Target URL to verify' },
+          requirements: { type: 'string', description: 'Plain-language QA requirements (optional)' },
+          out: { type: 'string', description: 'Output dir for spec + report (default: ./dsh-verify-out)' },
+          model: { type: 'string', description: 'LLM model (default: deepseek-v4-flash)' },
+          headed: { type: 'boolean', description: 'Run with a visible browser (debug only)' },
+        },
+        required: ['url'],
+      },
+    },
+    {
       name: 'health',
       description: 'Check that the dsh-verify MCP server and its Chromium browser are ready to run verifications.',
       inputSchema: { type: 'object', properties: {} },
@@ -119,6 +138,32 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
       await writeFile(specPath, JSON.stringify({ title: `verify ${url}`, base: String(url), steps }, null, 2));
       const result = await verify(specPath, out, { headed: !!args.headed });
       result.generatedSpec = specPath;
+      return { content: [{ type: 'text', text: JSON.stringify(result) }] };
+    }
+    if (name === 'generate_and_verify') {
+      const url = args?.url;
+      if (!url) throw new Error('url is required');
+      const browser = await chromium.launch({ headless: !(args?.headed) });
+      let facts;
+      try {
+        const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+        await page.goto(String(url), { waitUntil: 'load', timeout: 20000 });
+        facts = await extractPageFacts(page);
+      } finally {
+        await browser.close().catch(() => {});
+      }
+      const { spec } = await generateSpec({
+        url: String(url),
+        requirements: args?.requirements ? String(args.requirements) : '',
+        pageFacts: facts,
+        model: args?.model ? String(args.model) : undefined,
+      });
+      const specPath = join(out, 'generated-spec.json');
+      const { mkdir } = await import('node:fs/promises');
+      await mkdir(out, { recursive: true });
+      await writeFile(specPath, JSON.stringify(spec, null, 2));
+      const result = await verify(specPath, out, { headed: !!args.headed });
+      result.spec = specPath;
       return { content: [{ type: 'text', text: JSON.stringify(result) }] };
     }
     if (name === 'health') {
