@@ -1,0 +1,17 @@
+{
+  "name": "dsh-verify",
+  "version": "0.1.0",
+  "description": "Independent browser acceptance testing for agent deliverables. Agents self-test and pass; real browsers tell the truth.",
+  "type": "module",
+  "bin": {
+    "dsh-verify": "bin/verify.mjs"
+  },
+  "scripts": {
+    "demo:buggy": "node bin/verify.mjs --spec demo/buggy.json --out /tmp/dshv-buggy",
+    "demo:fixed": "node bin/verify.mjs --spec demo/fixed.json --out /tmp/dshv-fixed"
+  },
+  "dependencies": {
+    "playwright": "^1.62.1"
+  },
+  "license": "MIT"
+}

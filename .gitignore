@@ -1,0 +1,4 @@
+node_modules/
+dsh-verify-out/
+*.log
+.DS_Store

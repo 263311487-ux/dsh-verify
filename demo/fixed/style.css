@@ -1,0 +1,70 @@
+/* style.css — DSH Team Demo
+   Dark theme: dark background, light text, centered padded layout. */
+
+#page {
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: 2rem;
+  background-color: #12161f;
+  color: #e8eaf0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  box-sizing: border-box;
+}
+
+h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-align: center;
+  color: #ffffff;
+}
+
+#count-btn,
+#color-btn {
+  min-width: 11rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #2f3a52;
+  border: 1px solid #46536e;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease, border-color 0.2s ease;
+}
+
+#count-btn:hover,
+#color-btn:hover {
+  background-color: #3d4b6b;
+  border-color: #6b7ba0;
+}
+
+#count-btn:active,
+#color-btn:active {
+  transform: translateY(1px);
+  background-color: #273043;
+}
+
+#count-btn:focus-visible,
+#color-btn:focus-visible {
+  outline: 2px solid #7aa2ff;
+  outline-offset: 2px;
+}
+
+/* Fix (human review): the .dark class toggled by app.js was never styled.
+   Default theme is dark; toggling now switches to a light theme. */
+#page.dark {
+  background-color: #f5f7fa;
+  color: #1a1f2b;
+}
+
+#page.dark h1 {
+  color: #1a1f2b;
+}
