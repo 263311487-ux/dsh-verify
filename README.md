@@ -75,7 +75,7 @@ Then tell your agent, in plain words:
 
 > Verify http://localhost:3000 — click `#dark-toggle`, then check `body` background-color changed. Screenshot it.
 
-The agent calls `verify_url` with a list of human-style checks (goto / click / fill / expect_text / expect_class / capture_style / expect_style_changed / expect_url_contains / expect_navigation / expect_console_errors / expect_network_errors / screenshot), a real headless Chromium executes them deterministically, and the agent gets a `PASS`/`FAIL` verdict plus a self-contained HTML report.
+The agent calls `verify_url` with a list of human-style checks (goto / click / fill / expect_text / expect_class / capture_style / expect_style_changed / expect_url_contains / expect_navigation / expect_console_errors / expect_network_errors / screenshot / expect_screenshot), a real headless Chromium executes them deterministically, and the agent gets a `PASS`/`FAIL` verdict plus a self-contained HTML report.
 
 Tools exposed by the MCP server:
 
@@ -87,6 +87,29 @@ Tools exposed by the MCP server:
 | `health` | Confirm the server and Chromium are ready |
 
 No LLM judges the outcome — the browser is the judge. That's the whole point.
+
+## Visual regression (pixel-level screenshot baselines)
+
+Change the page and let the pixels tell you — not your eyes, not your memory:
+
+```json
+{
+  "title": "my app",
+  "serve": "dist",
+  "steps": [
+    { "action": "goto", "path": "/index.html" },
+    { "action": "expect_screenshot", "name": "home", "threshold": 0.01 }
+  ]
+}
+```
+
+- First run **creates the baseline** (`out/baselines/home.png`) and passes.
+- Later runs compare real Chromium screenshots pixel-by-pixel; differences over `threshold` (default 1%) fail the build.
+- A red-highlight **diff image** lands in `out/diffs/` and is embedded in the HTML report.
+- Expected change? Refresh baselines instead of failing: `dsh-verify --spec spec.json --update-baselines`.
+- Scope a region with `"selector"`, tune noise with `"tolerance"` (per-channel, default 10).
+
+**Actions**: `capture_baseline` (explicitly save a baseline), `expect_screenshot` (compare against baseline).
 
 ## AI-drafted checklists (LLM writes them, a real browser enforces them)
 

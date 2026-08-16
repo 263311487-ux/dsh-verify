@@ -3,6 +3,8 @@
 // Agents self-test and pass; real browsers tell the truth.
 import { chromium } from 'playwright';
 import { readFile, writeFile, mkdir, readdir, stat } from 'node:fs/promises';
+import pngjs from 'pngjs';
+const { PNG } = pngjs;
 import { createServer } from 'node:http';
 import { extname, join, resolve, dirname, basename, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -18,6 +20,7 @@ options:
   --out <dir>     output dir for report.html + screenshots (default: ./dsh-verify-out)
   --url <url>     target URL; overrides spec.serve / spec.base / step path
   --headed        run with a visible browser
+  --update-baselines  refresh screenshot baselines instead of failing
   --json          print a machine-readable verdict object to stdout
   --help          show this help
 
@@ -25,6 +28,7 @@ actions:
   goto wait click fill expect_text expect_class capture_style
   expect_style_changed expect_url_contains expect_navigation
   expect_console_errors expect_network_errors screenshot
+  capture_baseline expect_screenshot (visual regression)
 
 docs: https://github.com/263311487-ux/dsh-verify
 `;
@@ -92,7 +96,35 @@ async function serveDir(dir) {
   return { url: `http://127.0.0.1:${server.address().port}`, close: () => server.close() };
 }
 
-export async function runOne(specPath, outDir, { headed, url }) {
+export function comparePng(bufA, bufB, { tolerance = 10 } = {}) {
+  const a = PNG.sync.read(bufA);
+  const b = PNG.sync.read(bufB);
+  if (a.width !== b.width || a.height !== b.height) {
+    return { diffRatio: 1, diffPng: null, note: `size ${a.width}x${a.height} vs ${b.width}x${b.height}` };
+  }
+  let diffPixels = 0;
+  const diff = new PNG({ width: a.width, height: a.height });
+  const t = Math.max(0, tolerance);
+  for (let i = 0; i < a.data.length; i += 4) {
+    const delta = Math.abs(a.data[i] - b.data[i]) + Math.abs(a.data[i + 1] - b.data[i + 1]) + Math.abs(a.data[i + 2] - b.data[i + 2]);
+    if (delta > t * 3) {
+      diffPixels++;
+      diff.data[i] = 255; diff.data[i + 1] = 0; diff.data[i + 2] = 0; diff.data[i + 3] = 255;
+    } else {
+      diff.data[i + 3] = 0;
+    }
+  }
+  return { diffRatio: diffPixels / (a.width * a.height), diffPng: PNG.sync.write(diff) };
+}
+
+async function snap(page, step) {
+  if (step.selector) {
+    return page.locator(step.selector).first().screenshot({ fullPage: step.full !== false });
+  }
+  return page.screenshot({ fullPage: step.full !== false });
+}
+
+export async function runOne(specPath, outDir, { headed, url, updateBaselines } = {}) {
   const spec = JSON.parse(await readFile(specPath, 'utf8'));
   const served = spec.serve ? await serveDir(spec.serve) : null;
   const base = served ? served.url : (url || spec.base || 'http://localhost');
@@ -176,6 +208,39 @@ export async function runOne(specPath, outDir, { headed, url }) {
           await writeFile(fp, png);
           pass(step, name + '.png');
         }
+        else if (a === 'capture_baseline') {
+          const png = await snap(page, step);
+          const name = (step.name || `baseline-${results.length}`).replace(/[^\w.-]/g, '_');
+          const baseDir = join(outDir, 'baselines');
+          await mkdir(baseDir, { recursive: true });
+          await writeFile(join(baseDir, name + '.png'), png);
+          pass(step, name + '.png');
+        }
+        else if (a === 'expect_screenshot') {
+          const name = (step.name || `shot-${results.length}`).replace(/[^\w.-]/g, '_');
+          const baseDir = join(outDir, 'baselines');
+          const basePath = join(baseDir, name + '.png');
+          const png = await snap(page, step);
+          await mkdir(baseDir, { recursive: true });
+          if (updateBaselines || !(await stat(basePath).catch(() => null))) {
+            await writeFile(basePath, png);
+            pass(step, updateBaselines ? 'baseline updated' : 'baseline created');
+          } else {
+            const base = await readFile(basePath);
+            const c = comparePng(base, png, { tolerance: step.tolerance ?? 10 });
+            const threshold = step.threshold ?? 0.01;
+            if (c.diffRatio <= threshold) {
+              pass(step, `diff ${(c.diffRatio * 100).toFixed(2)}% <= ${(threshold * 100).toFixed(2)}%`);
+            } else {
+              const diffDir = join(outDir, 'diffs');
+              await mkdir(diffDir, { recursive: true });
+              const diffRel = 'diffs/' + name + '-diff.png';
+              await writeFile(join(outDir, diffRel), c.diffPng || Buffer.from(''));
+              fail(step, `diff ${(c.diffRatio * 100).toFixed(2)}% > ${(threshold * 100).toFixed(2)}% (${c.note || diffRel})`);
+              results[results.length - 1].diff = diffRel;
+            }
+          }
+        }
         else fail(step, `unknown action "${a}"`);
       } catch (e) {
         fail(step, String(e && e.message || e).slice(0, 300));
@@ -195,13 +260,15 @@ export async function runOne(specPath, outDir, { headed, url }) {
     const badge = r.ok ? '<span class="b ok">✅</span>' : '<span class="b no">❌</span>';
     const shot = r.action === 'screenshot' && r.ok
       ? `<img class="shot" src="${esc(r.detail)}" alt="${esc(r.detail)}">` : '';
+    const diffImg = r.diff
+      ? `<img class="shot" src="${esc(r.diff)}" alt="${esc(r.diff)}">` : '';
     return `<div class="row ${r.ok ? 'pass' : 'fail'}">
       ${badge}<div class="meta"><code>${esc(i + 1)}. ${esc(r.action)}</code>
       ${r.selector ? ` <code>${esc(r.selector)}</code>` : ''}
       ${r.text ? ` <code>"${esc(r.text)}"</code>` : ''}
       ${r.class ? ` <code>.${esc(r.class)}</code>` : ''}
       ${r.prop ? ` <code>${esc(r.prop)}</code>` : ''}
-      <div class="detail">${esc(r.detail || '')}</div></div>${shot}</div>`;
+      <div class="detail">${esc(r.detail || '')}</div></div>${shot}${diffImg}</div>`;
   }).join('\n');
 
   const html = `<!doctype html><html lang="zh"><head><meta charset="utf-8"><title>dsh-verify report</title>
@@ -254,7 +321,7 @@ async function main() {
 
   for (const sp of specPaths) {
     const specOut = multi ? join(outDir, basename(sp).replace(/\.json$/, '')) : outDir;
-    const r = await runOne(sp, specOut, { headed: has('headed'), url: arg('url') });
+    const r = await runOne(sp, specOut, { headed: has('headed'), url: arg('url'), updateBaselines: has('update-baselines') });
     results.push(r);
     if (multi) {
       console.log(`${r.ok ? '[PASS]' : '[FAIL]'} ${sp} (${r.passed}/${r.total})`);
