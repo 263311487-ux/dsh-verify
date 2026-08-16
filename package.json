@@ -1,7 +1,7 @@
 {
   "name": "dsh-verify",
-  "version": "0.4.0",
-  "description": "Independent browser acceptance testing for agent deliverables. Agents self-test and pass; real browsers tell the truth.",
+  "version": "0.5.2",
+  "description": "Independent browser acceptance testing for agent deliverables. Agents self-test and pass; real browsers tell the truth. CLI + MCP server.",
   "keywords": [
     "agent",
     "agents",
@@ -15,11 +15,13 @@
   ],
   "type": "module",
   "bin": {
-    "dsh-verify": "bin/verify.mjs"
+    "dsh-verify": "bin/verify.mjs",
+    "dsh-verify-mcp": "mcp/server.mjs"
   },
   "files": [
     "bin/",
-    "cordis.patch.yml"
+    "cordis.patch.yml",
+    "mcp/"
   ],
   "engines": {
     "node": ">=18"
@@ -36,7 +38,8 @@
     "prepublishOnly": "npm test"
   },
   "dependencies": {
-    "playwright": "^1.62.1"
+    "playwright": "^1.62.1",
+    "@modelcontextprotocol/sdk": "^1.12.1"
   },
   "license": "MIT",
   "dsh": {

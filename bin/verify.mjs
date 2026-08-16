@@ -92,7 +92,7 @@ async function serveDir(dir) {
   return { url: `http://127.0.0.1:${server.address().port}`, close: () => server.close() };
 }
 
-async function runOne(specPath, outDir, { headed, url }) {
+export async function runOne(specPath, outDir, { headed, url }) {
   const spec = JSON.parse(await readFile(specPath, 'utf8'));
   const served = spec.serve ? await serveDir(spec.serve) : null;
   const base = served ? served.url : (url || spec.base || 'http://localhost');
@@ -274,4 +274,5 @@ async function main() {
   process.exit(allOk ? 0 : 1);
 }
 
-main().catch((e) => { console.error(e); process.exit(1); });
+const isMain = process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+if (isMain) main().catch((e) => { console.error(e); process.exit(1); });

@@ -53,6 +53,34 @@ dsh plugin --profile web add dsh-verify
 npx dsh-verify --help
 ```
 
+## Use it from any AI agent (MCP)
+
+`dsh-verify` ships a **MCP server**, so Claude Code, Cursor, Copilot, or any MCP-capable agent can verify its own deliverables in a real browser — no spec files required:
+
+```bash
+# register once (Claude Code)
+claude mcp add dsh-verify -- npx -y -p dsh-verify dsh-verify-mcp
+
+# or (Cursor / generic MCP client)
+# add a stdio server with the command:  npx -y -p dsh-verify dsh-verify-mcp
+```
+
+Then tell your agent, in plain words:
+
+> Verify http://localhost:3000 — click `#dark-toggle`, then check `body` background-color changed. Screenshot it.
+
+The agent calls `verify_url` with a list of human-style checks (goto / click / fill / expect_text / expect_class / capture_style / expect_style_changed / expect_url_contains / expect_navigation / expect_console_errors / expect_network_errors / screenshot), a real headless Chromium executes them deterministically, and the agent gets a `PASS`/`FAIL` verdict plus a self-contained HTML report.
+
+Tools exposed by the MCP server:
+
+| Tool | What it does |
+|---|---|
+| `verify_spec` | Run an existing spec JSON file (or glob) against real Chromium |
+| `verify_url` | Verify a live URL against an inline list of checks — no files needed |
+| `health` | Confirm the server and Chromium are ready |
+
+No LLM judges the outcome — the browser is the judge. That's the whole point.
+
 Requires Node >= 18 and one browser install: `npx playwright install chromium`.
 
 ## Quick start
