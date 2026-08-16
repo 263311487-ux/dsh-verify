@@ -42,9 +42,10 @@ A self-contained HTML report — every step with a pass/fail badge, selector, an
 - Reads a **JSON spec** (no framework, no config language)
 - Serves your static directory (or points at any URL)
 - Drives a **real headless Chromium** (Playwright)
-- Checks what humans check: text, classes, **computed styles**, URLs
-- Emits a self-contained **HTML report** with screenshots
+- Checks what humans check: text, classes, **computed styles**, URLs, **pixels**
+- Emits a self-contained **HTML report** with screenshots and diff images
 - Exits `0` on pass, `1` on fail → drop it into any CI
+- **MCP server** for Claude Code / Cursor / Copilot · **AI-drafted checklists** · **GitHub Action** · **DSH plugin**
 
 ## Install
 
@@ -87,6 +88,20 @@ Tools exposed by the MCP server:
 | `health` | Confirm the server and Chromium are ready |
 
 No LLM judges the outcome — the browser is the judge. That's the whole point.
+
+## Use it in CI (GitHub Action)
+
+One step in any workflow — installs dsh-verify and Chromium in isolation (your project is untouched), runs the checks, and uploads the report as an artifact:
+
+```yaml
+- uses: 263311487-ux/dsh-verify/.github/actions/dsh-verify@main
+  with:
+    spec: demo/fixed.json       # spec file or glob
+    # url: https://staging.example.com   # optional override
+    # out: dsh-verify-out               # report output dir (default)
+```
+
+The repo dogfoods it: the [dogfood workflow](.github/workflows/dogfood.yml) asserts the fixed build **passes** and the buggy build **fails** on every push.
 
 ## Visual regression (pixel-level screenshot baselines)
 
@@ -206,6 +221,8 @@ Each spec gets its own `reports/<name>/` folder; exit is `0` only if **all** pas
 | `expect_console_errors` | `present?` | No console errors during the run (default: expect none) |
 | `expect_network_errors` | `present?` | No 4xx/5xx responses or failed requests (default: expect none) |
 | `screenshot` | `name`, `full?` | Save a PNG into the report |
+| `capture_baseline` | `name`, `selector?` | Save a screenshot as a visual baseline |
+| `expect_screenshot` | `name`, `threshold?`, `tolerance?`, `selector?` | Pixel-diff against the baseline; fails over `threshold` (default 1%) |
 
 The `capture_style` → `expect_style_changed` pair is the heart of this project: it verifies **what the user sees**, not what the DOM class list says.
 
@@ -246,6 +263,13 @@ None of them run a real browser against the artifact and answer: *"When I click 
 - [x] Multi-page flows and `expect_navigation` (wait for URL after click)
 - [x] `--spec` glob (run many specs, one aggregated verdict)
 - [x] Docker image with pinned Chromium (`mcr.microsoft.com/playwright:v1.62.1-jammy`)
+- [x] DSH plugin manifest (`dsh plugin add dsh-verify`)
+- [x] MCP server — verify from Claude Code / Cursor / Copilot (`verify_spec` / `verify_url` / `generate_and_verify`)
+- [x] AI-drafted checklists — `dsh-verify gen` (LLM drafts, deterministic browser enforces)
+- [x] GitHub Action — one-step CI acceptance with report artifact
+- [x] Visual regression — pixel-level screenshot baselines (`capture_baseline` / `expect_screenshot`)
+- [ ] Multi-browser matrix (firefox / webkit) and mobile viewports
+- [ ] AI spec generation from a natural-language requirement without a running page
 
 ## License
 
