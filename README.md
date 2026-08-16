@@ -40,6 +40,21 @@ Same page. Same JS. One missing CSS rule. Two different verdicts.
 - Emits a self-contained **HTML report** with screenshots
 - Exits `0` on pass, `1` on fail → drop it into any CI
 
+## Install
+
+```bash
+# from npm (CLI)
+npm install -g dsh-verify
+
+# as a DeepSeek Harness (DSH) plugin — available in every session of the profile
+dsh plugin --profile web add dsh-verify
+
+# or run without installing
+npx dsh-verify --help
+```
+
+Requires Node >= 18 and one browser install: `npx playwright install chromium`.
+
 ## Quick start
 
 ```bash

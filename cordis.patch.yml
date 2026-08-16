@@ -1,0 +1,6 @@
+# dsh-verify bundle patch: registers the dsh-verify CLI as a tool in the
+# profile composition. After `dsh plugin --profile <name> add dsh-verify`,
+# the `dsh-verify` command is available in every session of that profile.
+- insert:
+    - id: dsh-verify
+      name: dsh-verify
