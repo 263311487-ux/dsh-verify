@@ -29,6 +29,12 @@ This repo contains the bug, fixed, side by side — and the browser-driven evide
 
 Same page. Same JS. One missing CSS rule. Two different verdicts.
 
+## The report
+
+A self-contained HTML report — every step with a pass/fail badge, selector, and detail, plus screenshots:
+
+![dsh-verify report](assets/report-screenshot.png)
+
 ---
 
 ## What it does
