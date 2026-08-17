@@ -125,6 +125,14 @@ npm test              # engine self-tests
 
 The repo's own CI runs exactly that — engine self-tests, then asserts fixed **passes** and buggy **fails** — so the tool verifies itself on every push.
 
+## Agent Arena — can agents ship working web apps?
+
+Same task, same prompt, same human checks — different agents, graded by dsh-verify in a real browser. Seed result (2026-08-17): **11/12 runs passed**. The one failure: DeepSeek v4-flash single-shot shipped a todo app with 0 seeded todos (9/19 checks failed); with a real-browser self-check loop the same model passed **19/19**.
+
+[![Agent Arena](https://img.shields.io/badge/Agent%20Arena-live-3fb950)](https://263311487-ux.github.io/dsh-verify/arena/)
+
+See [docs/ARENA.md](docs/ARENA.md) — methodology, the tasks, and how to run your own agent.
+
 ## Badge your agent-built app
 
 Built something with an AI agent? Prove it in a real browser and show the world:

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Todo</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 480px; margin: 40px auto; padding: 0 16px; }
+  h1 { font-size: 24px; }
+  #remaining { color: #666; }
+  ul#todo-list { list-style: none; padding: 0; }
+  li.todo { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #eee; }
+  li.todo.done span { text-decoration: line-through; color: #999; }
+  li.todo .delete { margin-left: auto; border: none; background: none; color: #c00; cursor: pointer; }
+  #new-todo { padding: 8px; width: 60%; }
+  #add-todo { padding: 8px 16px; }
+</style>
+</head>
+<body>
+  <h1>Todo</h1>
+  <p id="remaining">0 remaining</p>
+  <input id="new-todo" type="text" placeholder="New todo">
+  <button id="add-todo">Add</button>
+  <ul id="todo-list"></ul>
+<script>
+  const KEY = "todos";
+  const seed = ["Buy milk", "Walk dog", "Write report"];
+  let todos = load();
+  function load() {
+    try {
+      const raw = localStorage.getItem(KEY);
+      const arr = raw ? JSON.parse(raw) : null;
+      if (Array.isArray(arr)) return arr;
+    } catch (e) {}
+    const seeded = seed.map(t => ({ text: t, done: false }));
+    try { localStorage.setItem(KEY, JSON.stringify(seeded)); } catch (e) {}
+    return seeded;
+  }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(todos)); } catch (e) {} }
+  function render() {
+    const list = document.getElementById("todo-list");
+    list.innerHTML = "";
+    let remaining = 0;
+    for (const [i, t] of todos.entries()) {
+      if (!t.done) remaining++;
+      const li = document.createElement("li");
+      li.className = "todo" + (t.done ? " done" : "");
+      const cb = document.createElement("input");
+      cb.type = "checkbox"; cb.className = "toggle"; cb.checked = t.done;
+      cb.addEventListener("change", () => { t.done = cb.checked; save(); render(); });
+      const span = document.createElement("span");
+      span.textContent = t.text;
+      const del = document.createElement("button");
+      del.className = "delete"; del.textContent = "×";
+      del.addEventListener("click", () => { todos.splice(i, 1); save(); render(); });
+      li.append(cb, span, del);
+      list.appendChild(li);
+    }
+    document.getElementById("remaining").textContent = remaining + " remaining";
+  }
+  document.getElementById("add-todo").addEventListener("click", () => {
+    const input = document.getElementById("new-todo");
+    const text = input.value.trim();
+    if (!text) return;
+    todos.push({ text, done: false });
+    save(); render();
+    input.value = "";
+  });
+  document.getElementById("new-todo").addEventListener("keydown", e => {
+    if (e.key === "Enter") document.getElementById("add-todo").click();
+  });
+  render();
+</script>
+</body>
+</html>

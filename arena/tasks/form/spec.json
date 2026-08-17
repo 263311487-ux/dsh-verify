@@ -1,0 +1,25 @@
+{
+  "title": "signup form validation",
+  "serve": "__SERVE__",
+  "browser": "chromium",
+  "steps": [
+    { "action": "goto", "path": "/index.html" },
+    { "action": "click", "selector": "#submit" },
+    { "action": "wait", "ms": 200 },
+    { "action": "expect_text", "selector": "#err-name", "text": "Name is required" },
+    { "action": "expect_text", "selector": "#err-email", "text": "Enter a valid email address" },
+    { "action": "expect_text", "selector": "#err-password", "text": "Password must be at least 8 characters" },
+    { "action": "fill", "selector": "#name", "text": "Ada Lovelace" },
+    { "action": "fill", "selector": "#email", "text": "not-an-email" },
+    { "action": "fill", "selector": "#password", "text": "12345678" },
+    { "action": "click", "selector": "#submit" },
+    { "action": "wait", "ms": 200 },
+    { "action": "expect_text", "selector": "#err-email", "text": "Enter a valid email address" },
+    { "action": "fill", "selector": "#email", "text": "ada@example.com" },
+    { "action": "click", "selector": "#submit" },
+    { "action": "wait", "ms": 200 },
+    { "action": "expect_text", "selector": "#success", "text": "Account created" },
+    { "action": "expect_console_errors", "present": false },
+    { "action": "expect_network_errors", "present": false }
+  ]
+}

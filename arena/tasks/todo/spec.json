@@ -1,0 +1,26 @@
+{
+  "title": "todo app",
+  "serve": "__SERVE__",
+  "browser": "chromium",
+  "steps": [
+    { "action": "goto", "path": "/index.html" },
+    { "action": "expect_text", "selector": "#remaining", "text": "3 remaining" },
+    { "action": "fill", "selector": "#new-todo", "text": "Pay rent" },
+    { "action": "click", "selector": "#add-todo" },
+    { "action": "wait", "ms": 200 },
+    { "action": "expect_text", "selector": "#remaining", "text": "4 remaining" },
+    { "action": "expect_text", "selector": "#todo-list", "text": "Pay rent" },
+    { "action": "click", "selector": ".todo:has-text('Pay rent') .toggle" },
+    { "action": "wait", "ms": 200 },
+    { "action": "expect_class", "selector": ".todo:has-text('Pay rent')", "class": "done", "present": true },
+    { "action": "expect_text", "selector": "#remaining", "text": "3 remaining" },
+    { "action": "click", "selector": ".todo:has-text('Walk dog') .delete" },
+    { "action": "wait", "ms": 200 },
+    { "action": "expect_text", "selector": "#remaining", "text": "2 remaining" },
+    { "action": "goto", "path": "/index.html" },
+    { "action": "expect_text", "selector": "#remaining", "text": "2 remaining" },
+    { "action": "expect_class", "selector": ".todo:has-text('Pay rent')", "class": "done", "present": true },
+    { "action": "expect_console_errors", "present": false },
+    { "action": "expect_network_errors", "present": false }
+  ]
+}

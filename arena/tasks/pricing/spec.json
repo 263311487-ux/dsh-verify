@@ -1,0 +1,29 @@
+{
+  "title": "pricing calculator",
+  "serve": "__SERVE__",
+  "browser": "chromium",
+  "steps": [
+    { "action": "goto", "path": "/index.html" },
+    { "action": "expect_text", "selector": "#total", "text": "¥106.00" },
+    { "action": "fill", "selector": "#qty", "text": "10" },
+    { "action": "wait", "ms": 200 },
+    { "action": "expect_text", "selector": "#total", "text": "¥1060.00" },
+    { "action": "click", "selector": "#tier-10" },
+    { "action": "wait", "ms": 200 },
+    { "action": "expect_class", "selector": "#tier-10", "class": "active", "present": true },
+    { "action": "expect_text", "selector": "#total", "text": "¥954.00" },
+    { "action": "fill", "selector": "#price", "text": "50" },
+    { "action": "fill", "selector": "#qty", "text": "5" },
+    { "action": "click", "selector": "#tier-20" },
+    { "action": "wait", "ms": 200 },
+    { "action": "expect_text", "selector": "#total", "text": "¥212.00" },
+    { "action": "fill", "selector": "#qty", "text": "0" },
+    { "action": "wait", "ms": 200 },
+    { "action": "expect_text", "selector": "#error", "text": "Invalid quantity or price" },
+    { "action": "fill", "selector": "#qty", "text": "3" },
+    { "action": "wait", "ms": 200 },
+    { "action": "expect_text", "selector": "#total", "text": "¥127.20" },
+    { "action": "expect_console_errors", "present": false },
+    { "action": "expect_network_errors", "present": false }
+  ]
+}

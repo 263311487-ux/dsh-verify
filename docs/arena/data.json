@@ -1,0 +1,301 @@
+[
+  {
+    "id": "deepseek-v4-flash__selfcheck__form",
+    "model": "deepseek-v4-flash",
+    "strategy": "selfcheck",
+    "task": "form",
+    "startedAt": "2026-08-17T13:47:41.012Z",
+    "finishedAt": "2026-08-17T13:54:23.932Z",
+    "rounds": 1,
+    "history": [
+      {
+        "round": 0,
+        "verdict": "PASS",
+        "passed": 18,
+        "total": 18
+      }
+    ],
+    "final": {
+      "verdict": "PASS",
+      "passed": 18,
+      "total": 18,
+      "failed": [],
+      "report": "/Users/yuanjinggongsheng/Documents/Codex/2026-08-16/de/work/dsh-verify/arena/work/form-out/report.html"
+    }
+  },
+  {
+    "id": "deepseek-v4-flash__selfcheck__pricing",
+    "model": "deepseek-v4-flash",
+    "strategy": "selfcheck",
+    "task": "pricing",
+    "startedAt": "2026-08-17T13:47:41.012Z",
+    "finishedAt": "2026-08-17T13:54:00.232Z",
+    "rounds": 1,
+    "history": [
+      {
+        "round": 0,
+        "verdict": "PASS",
+        "passed": 22,
+        "total": 22
+      }
+    ],
+    "final": {
+      "verdict": "PASS",
+      "passed": 22,
+      "total": 22,
+      "failed": [],
+      "report": "/Users/yuanjinggongsheng/Documents/Codex/2026-08-16/de/work/dsh-verify/arena/work/pricing-out/report.html"
+    }
+  },
+  {
+    "id": "deepseek-v4-flash__selfcheck__todo",
+    "model": "deepseek-v4-flash",
+    "strategy": "selfcheck",
+    "task": "todo",
+    "startedAt": "2026-08-17T13:54:30.665Z",
+    "finishedAt": "2026-08-17T13:56:09.231Z",
+    "rounds": 1,
+    "history": [
+      {
+        "round": 0,
+        "verdict": "PASS",
+        "passed": 19,
+        "total": 19
+      }
+    ],
+    "final": {
+      "verdict": "PASS",
+      "passed": 19,
+      "total": 19,
+      "failed": [],
+      "report": "/Users/yuanjinggongsheng/Documents/Codex/2026-08-16/de/work/dsh-verify/arena/work/todo-out/report.html"
+    }
+  },
+  {
+    "id": "deepseek-v4-flash__single__form",
+    "model": "deepseek-v4-flash",
+    "strategy": "single",
+    "task": "form",
+    "startedAt": "2026-08-17T13:42:22.141Z",
+    "finishedAt": "2026-08-17T13:44:46.090Z",
+    "rounds": 1,
+    "history": [
+      {
+        "round": 0,
+        "verdict": "PASS",
+        "passed": 18,
+        "total": 18
+      }
+    ],
+    "final": {
+      "verdict": "PASS",
+      "passed": 18,
+      "total": 18,
+      "failed": [],
+      "report": "/Users/yuanjinggongsheng/Documents/Codex/2026-08-16/de/work/dsh-verify/arena/work/form-out/report.html"
+    }
+  },
+  {
+    "id": "deepseek-v4-flash__single__pricing",
+    "model": "deepseek-v4-flash",
+    "strategy": "single",
+    "task": "pricing",
+    "startedAt": "2026-08-17T13:42:22.141Z",
+    "finishedAt": "2026-08-17T13:44:27.605Z",
+    "rounds": 1,
+    "history": [
+      {
+        "round": 0,
+        "verdict": "PASS",
+        "passed": 22,
+        "total": 22
+      }
+    ],
+    "final": {
+      "verdict": "PASS",
+      "passed": 22,
+      "total": 22,
+      "failed": [],
+      "report": "/Users/yuanjinggongsheng/Documents/Codex/2026-08-16/de/work/dsh-verify/arena/work/pricing-out/report.html"
+    }
+  },
+  {
+    "id": "deepseek-v4-flash__single__todo",
+    "model": "deepseek-v4-flash",
+    "strategy": "single",
+    "task": "todo",
+    "startedAt": "2026-08-17T13:44:51.074Z",
+    "finishedAt": "2026-08-17T13:47:29.818Z",
+    "rounds": 1,
+    "history": [
+      {
+        "round": 0,
+        "verdict": "FAIL",
+        "passed": 9,
+        "total": 19
+      }
+    ],
+    "final": {
+      "verdict": "FAIL",
+      "passed": 9,
+      "total": 19,
+      "failed": [
+        "expect_text #remaining: got \"0 remaining\"",
+        "expect_text #remaining: got \"0 remaining\"",
+        "expect_text #todo-list: got \"\"",
+        "click .todo:has-text('Pay rent') .toggle: page.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.todo:has-text(\\'Pay rent\\') .toggle')\u001b[22m",
+        "expect_class .todo:has-text('Pay rent'): locator.getAttribute: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.todo:has-text(\\'Pay rent\\')').first()\u001b[22m",
+        "expect_text #remaining: got \"0 remaining\"",
+        "click .todo:has-text('Walk dog') .delete: page.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.todo:has-text(\\'Walk dog\\') .delete')\u001b[22m",
+        "expect_text #remaining: got \"0 remaining\"",
+        "expect_text #remaining: got \"0 remaining\"",
+        "expect_class .todo:has-text('Pay rent'): locator.getAttribute: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.todo:has-text(\\'Pay rent\\')').first()\u001b[22m"
+      ],
+      "report": "/Users/yuanjinggongsheng/Documents/Codex/2026-08-16/de/work/dsh-verify/arena/work/todo-out/report.html"
+    }
+  },
+  {
+    "id": "deepseek-v4-pro__selfcheck__form",
+    "model": "deepseek-v4-pro",
+    "strategy": "selfcheck",
+    "task": "form",
+    "startedAt": "2026-08-17T14:00:50.005Z",
+    "finishedAt": "2026-08-17T14:06:20.460Z",
+    "rounds": 1,
+    "history": [
+      {
+        "round": 0,
+        "verdict": "PASS",
+        "passed": 18,
+        "total": 18
+      }
+    ],
+    "final": {
+      "verdict": "PASS",
+      "passed": 18,
+      "total": 18,
+      "failed": [],
+      "report": "/Users/yuanjinggongsheng/Documents/Codex/2026-08-16/de/work/dsh-verify/arena/work/form-out/report.html"
+    }
+  },
+  {
+    "id": "deepseek-v4-pro__selfcheck__pricing",
+    "model": "deepseek-v4-pro",
+    "strategy": "selfcheck",
+    "task": "pricing",
+    "startedAt": "2026-08-17T14:00:50.005Z",
+    "finishedAt": "2026-08-17T14:05:36.900Z",
+    "rounds": 1,
+    "history": [
+      {
+        "round": 0,
+        "verdict": "PASS",
+        "passed": 22,
+        "total": 22
+      }
+    ],
+    "final": {
+      "verdict": "PASS",
+      "passed": 22,
+      "total": 22,
+      "failed": [],
+      "report": "/Users/yuanjinggongsheng/Documents/Codex/2026-08-16/de/work/dsh-verify/arena/work/pricing-out/report.html"
+    }
+  },
+  {
+    "id": "deepseek-v4-pro__selfcheck__todo",
+    "model": "deepseek-v4-pro",
+    "strategy": "selfcheck",
+    "task": "todo",
+    "startedAt": "2026-08-17T14:00:50.005Z",
+    "finishedAt": "2026-08-17T14:02:32.367Z",
+    "rounds": 1,
+    "history": [
+      {
+        "round": 0,
+        "verdict": "PASS",
+        "passed": 19,
+        "total": 19
+      }
+    ],
+    "final": {
+      "verdict": "PASS",
+      "passed": 19,
+      "total": 19,
+      "failed": [],
+      "report": "/Users/yuanjinggongsheng/Documents/Codex/2026-08-16/de/work/dsh-verify/arena/work/todo-out/report.html"
+    }
+  },
+  {
+    "id": "deepseek-v4-pro__single__form",
+    "model": "deepseek-v4-pro",
+    "strategy": "single",
+    "task": "form",
+    "startedAt": "2026-08-17T13:56:12.065Z",
+    "finishedAt": "2026-08-17T14:00:47.341Z",
+    "rounds": 1,
+    "history": [
+      {
+        "round": 0,
+        "verdict": "PASS",
+        "passed": 18,
+        "total": 18
+      }
+    ],
+    "final": {
+      "verdict": "PASS",
+      "passed": 18,
+      "total": 18,
+      "failed": [],
+      "report": "/Users/yuanjinggongsheng/Documents/Codex/2026-08-16/de/work/dsh-verify/arena/work/form-out/report.html"
+    }
+  },
+  {
+    "id": "deepseek-v4-pro__single__pricing",
+    "model": "deepseek-v4-pro",
+    "strategy": "single",
+    "task": "pricing",
+    "startedAt": "2026-08-17T13:56:12.065Z",
+    "finishedAt": "2026-08-17T13:59:56.221Z",
+    "rounds": 1,
+    "history": [
+      {
+        "round": 0,
+        "verdict": "PASS",
+        "passed": 22,
+        "total": 22
+      }
+    ],
+    "final": {
+      "verdict": "PASS",
+      "passed": 22,
+      "total": 22,
+      "failed": [],
+      "report": "/Users/yuanjinggongsheng/Documents/Codex/2026-08-16/de/work/dsh-verify/arena/work/pricing-out/report.html"
+    }
+  },
+  {
+    "id": "deepseek-v4-pro__single__todo",
+    "model": "deepseek-v4-pro",
+    "strategy": "single",
+    "task": "todo",
+    "startedAt": "2026-08-17T13:56:12.065Z",
+    "finishedAt": "2026-08-17T13:58:06.564Z",
+    "rounds": 1,
+    "history": [
+      {
+        "round": 0,
+        "verdict": "PASS",
+        "passed": 19,
+        "total": 19
+      }
+    ],
+    "final": {
+      "verdict": "PASS",
+      "passed": 19,
+      "total": 19,
+      "failed": [],
+      "report": "/Users/yuanjinggongsheng/Documents/Codex/2026-08-16/de/work/dsh-verify/arena/work/todo-out/report.html"
+    }
+  }
+]

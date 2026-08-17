@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Pricing calculator</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 480px; margin: 40px auto; padding: 0 16px; }
+  label { display: block; margin: 12px 0 4px; }
+  input { padding: 8px; width: 120px; }
+  .tier { padding: 8px 16px; margin-right: 6px; border: 1px solid #ccc; background: #fff; cursor: pointer; border-radius: 6px; }
+  .tier.active { background: #1f6feb; color: #fff; border-color: #1f6feb; }
+  #total { font-size: 28px; font-weight: 700; margin-top: 20px; }
+  #error { color: #c00; min-height: 20px; }
+</style>
+</head>
+<body>
+  <h1>Pricing calculator</h1>
+  <label for="price">Unit price</label>
+  <input id="price" type="number" value="100">
+  <label for="qty">Quantity</label>
+  <input id="qty" type="number" value="1">
+  <label>Discount tier</label>
+  <div>
+    <button class="tier active" id="tier-0">0%</button>
+    <button class="tier" id="tier-10">10%</button>
+    <button class="tier" id="tier-20">20%</button>
+  </div>
+  <div id="error"></div>
+  <div id="total"></div>
+<script>
+  const priceEl = document.getElementById("price");
+  const qtyEl = document.getElementById("qty");
+  const totalEl = document.getElementById("total");
+  const errorEl = document.getElementById("error");
+  const tiers = [document.getElementById("tier-0"), document.getElementById("tier-10"), document.getElementById("tier-20")];
+  let tier = 0;
+  tiers.forEach(btn => btn.addEventListener("click", () => {
+    tier = Number(btn.id.split("-")[1]);
+    tiers.forEach(b => b.classList.toggle("active", b === btn));
+    calc();
+  }));
+  [priceEl, qtyEl].forEach(el => el.addEventListener("input", calc));
+  function calc() {
+    const price = Number(priceEl.value);
+    const qty = Number(qtyEl.value);
+    if (!(qty >= 1) || !(price >= 0)) {
+      errorEl.textContent = "Invalid quantity or price";
+      totalEl.textContent = "";
+      return;
+    }
+    errorEl.textContent = "";
+    const total = qty * price * (1 - tier / 100) * 1.06;
+    totalEl.textContent = "¥" + total.toFixed(2);
+  }
+  calc();
+</script>
+</body>
+</html>
