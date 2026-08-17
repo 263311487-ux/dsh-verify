@@ -12,5 +12,6 @@ RUN npm ci --omit=dev --no-audit --no-fund
 
 COPY . .
 
-ENTRYPOINT ["node", "bin/verify.mjs"]
-CMD ["--help"]
+# Default: run as MCP server (stdio) so container-based checks (Glama, connectors, etc.)
+# can introspect the server. Override with: docker run --rm <image> node bin/verify.mjs --help
+ENTRYPOINT ["node", "mcp/server.mjs"]
