@@ -2,6 +2,8 @@
 
 [![ci](https://github.com/263311487-ux/dsh-verify/actions/workflows/ci.yml/badge.svg)](https://github.com/263311487-ux/dsh-verify/actions/workflows/ci.yml)
 
+[![263311487-ux/dsh-verify MCP server](https://glama.ai/mcp/servers/263311487-ux/dsh-verify/badges/score.svg)](https://glama.ai/mcp/servers/263311487-ux/dsh-verify)
+
 > **Agents self-test and pass. Real browsers tell the truth.**
 
 `dsh-verify` is a tiny, dependency-light acceptance tester for **agent-delivered web artifacts**. You write a JSON spec of what a human would check in a browser; it launches a real headless Chromium, clicks, reads computed styles, and produces an HTML report plus a `0/1` exit code.
