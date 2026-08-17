@@ -1,0 +1,52 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#0d1117; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; color:#e6edf3; }
+.wrap { width:900px; height:600px; padding:40px 44px; display:flex; flex-direction:column; gap:18px; }
+.title { font-size:22px; font-weight:700; color:#79c0ff; letter-spacing:.2px; }
+.sub { font-size:14px; color:#8b949e; margin-top:-12px; }
+.term { background:#161b22; border:1px solid #30363d; border-radius:10px; overflow:hidden; }
+.termbar { display:flex; align-items:center; gap:6px; padding:9px 14px; border-bottom:1px solid #30363d; }
+.dot { width:11px; height:11px; border-radius:50%; }
+.termbar .t { margin-left:8px; font-size:12px; color:#8b949e; }
+.lines { padding:16px 18px; font-size:15px; line-height:1.75; }
+.prompt { color:#3fb950; } .cmd { color:#e6edf3; }
+.ok { color:#3fb950; font-weight:700; } .bad { color:#f85149; font-weight:700; }
+.gate { margin-top:auto; text-align:center; font-size:17px; font-weight:700; padding:14px; border-radius:10px; border:1px solid #30363d; color:#8b949e; }
+.gate.pass { background:#12261b; border-color:#238636; color:#3fb950; }
+.blink { animation: bl 1s steps(2) infinite; }
+@keyframes bl { 50% { opacity:0; } }
+</style></head><body><div class="wrap">
+<div class="title">dsh-verify</div>
+<div class="sub">agent deliverables · checked in a real browser</div>
+<div class="term"><div class="termbar">
+<span class="dot" style="background:#ff5f56"></span><span class="dot" style="background:#ffbd2e"></span><span class="dot" style="background:#27c93f"></span>
+<span class="t">dsh-verify — demo</span></div>
+<div class="lines" id="lines"></div></div>
+<div class="gate" id="gate">Real browsers tell the truth.</div>
+</div>
+<script>
+var FIXED = __FIXED_JSON__;
+var BUGGY = __BUGGY_JSON__;
+var L = document.getElementById("lines");
+function wait(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+function add(t, cls){ var d = document.createElement("div"); d.className = cls || ""; d.textContent = t; L.appendChild(d); L.scrollTop = 1e9; }
+function esc(s){ return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+async function type(t, ms){ var n = t.length, step = Math.max(1, Math.round(ms / n));
+  for (var i = 0; i <= n; i++){ L.innerHTML = '<div><span class="prompt">$ </span><span class="cmd">' + esc(t.slice(0, i)) + '</span><span class="blink">\u258d</span></div>'; await wait(step); } }
+async function show(){
+  await wait(700);
+  await type("npx dsh-verify --spec demo/fixed.json", 1100);
+  add(""); add("dsh-verify: PASS (" + FIXED.passed + "/" + FIXED.total + ")", "ok");
+  await wait(950);
+  await type("npx dsh-verify --spec demo/buggy.json", 1100);
+  add(""); add("dsh-verify: FAIL (" + BUGGY.passed + "/" + BUGGY.total + ")", "bad");
+  add("  \u274c expect_style_changed #page:", "bad");
+  add("     before rgb(18, 22, 31) \u2192 now rgb(18, 22, 31)", "bad");
+  await wait(950);
+  var g = document.getElementById("gate");
+  g.textContent = "Same app. One CSS rule. Two different verdicts.";
+  g.className = "gate pass";
+  await wait(1700);
+}
+show();
+</script></body></html>
