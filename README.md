@@ -3,6 +3,7 @@
 [![ci](https://github.com/263311487-ux/dsh-verify/actions/workflows/ci.yml/badge.svg)](https://github.com/263311487-ux/dsh-verify/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/dsh-verify)](https://www.npmjs.com/package/dsh-verify)
 [![MCP server](https://glama.ai/mcp/servers/263311487-ux/dsh-verify/badges/score.svg)](https://glama.ai/mcp/servers/263311487-ux/dsh-verify)
+[![awesome-dsh-plugin](https://img.shields.io/badge/awesome--dsh--plugin-listed-brightgreen)](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin)
 
 **You asked an AI to build a web app. It said "done." Does it actually work?**
 
