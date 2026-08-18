@@ -1,6 +1,6 @@
 {
   "name": "dsh-verify",
-  "version": "0.8.4",
+  "version": "0.8.5",
   "description": "Independent browser acceptance testing for agent deliverables: CLI, MCP, AI-drafted checklists, visual regression, multi-browser. Agents self-test and pass; real browsers tell the truth.",
   "keywords": [
     "agent",
@@ -35,7 +35,8 @@
     "demo:buggy": "node bin/verify.mjs --spec demo/buggy.json --out /tmp/dshv-buggy",
     "demo:fixed": "node bin/verify.mjs --spec demo/fixed.json --out /tmp/dshv-fixed",
     "ci": "npm test && node bin/verify.mjs --spec demo/fixed.json --out /tmp/dshv-ci-fixed && ! node bin/verify.mjs --spec demo/buggy.json --out /tmp/dshv-ci-buggy",
-    "prepublishOnly": "npm test"
+    "prepublishOnly": "npm run smoke",
+    "smoke": "node --test --test-name-pattern 'unknown browser' tests/browsers.test.mjs && node bin/verify.mjs --spec demo/fixed.json --out /tmp/dshv-smoke"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1",
