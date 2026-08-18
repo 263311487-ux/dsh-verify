@@ -14,6 +14,10 @@ The quality gate for **agent-built web apps**. Works with any agent — DeepSeek
 
 No LLM judges the outcome. **The browser is the judge.**
 
+![Same task, same AI, two builds — only a real browser tells the difference](assets/wow-compare.png)
+
+Same task. Same AI. Two builds. One missing CSS rule — the agent's self-review passed, a real browser caught it.
+
 ---
 
 ## Why this exists
@@ -32,6 +36,17 @@ That's the gap: *agents verify against what they believe they built, not against
 | `demo/fixed` | one CSS rule added | ✅ **PASS** — theme flips |
 
 Same page. Same JS. One missing CSS rule. Two different verdicts.
+
+## Why not just ...?
+
+| What you might reach for | Its blind spot | What dsh-verify adds |
+|---|---|---|
+| **Hand-rolled Playwright scripts** | Every agent project re-writes the same boilerplate; nothing is reviewable as a spec | A JSON spec is the whole contract — write once, reuse across agents and CI |
+| **LLM judges (promptfoo-style evals)** | An LLM says "looks right" — it doesn't run the app or see the pixels | A real browser executes clicks, inputs, styles, and returns screenshot receipts |
+| **Agent built-in browser tools** | They're the agent's *hands* — they share the same blind spots as the code they just wrote | dsh-verify is an independent witness, not part of the agent being tested |
+| **Screenshot-only visual tools** | They catch pixel drift, not "button does nothing" | Behavior checks: click, expect text/class/style change, console errors, network errors |
+
+The agent graded its own homework. dsh-verify re-grades it in a real browser.
 
 ## Use it three ways
 
@@ -127,7 +142,7 @@ The repo's own CI runs exactly that — engine self-tests, then asserts fixed **
 
 ## Agent Arena — can agents ship working web apps?
 
-Same task, same prompt, same human checks — different agents, graded by dsh-verify in a real browser. Seed result (2026-08-17): **11/12 runs passed**. The one failure: DeepSeek v4-flash single-shot shipped a todo app with 0 seeded todos (9/19 checks failed); with a real-browser self-check loop the same model passed **19/19**.
+Same task, same prompt, same human checks — different agents, graded by dsh-verify in a real browser. Latest run (2026-08-18): **44/48 runs passed** across 4 agents × 4 tasks. The one failure: DeepSeek v4-flash single-shot shipped a todo app with 0 seeded todos (9/19 checks failed); with a real-browser self-check loop the same model passed **19/19**.
 
 [![Agent Arena](https://img.shields.io/badge/Agent%20Arena-live-3fb950)](https://263311487-ux.github.io/dsh-verify/arena/)
 
