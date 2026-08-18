@@ -1,0 +1,19 @@
+{
+  "id": "deepseek-v4-pro__single__pricing__r1",
+  "model": "deepseek-v4-pro",
+  "strategy": "single",
+  "task": "pricing",
+  "startedAt": "2026-08-18T06:56:08.768Z",
+  "finishedAt": "2026-08-18T07:07:53.033Z",
+  "rounds": 0,
+  "history": [],
+  "final": {
+    "verdict": "ERROR",
+    "passed": 0,
+    "total": 0,
+    "failed": [
+      "\"undefined\" is not valid JSON"
+    ],
+    "report": null
+  }
+}

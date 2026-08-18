@@ -1,0 +1,24 @@
+{
+  "id": "deepseek-v4-pro__single__todo__r1",
+  "model": "deepseek-v4-pro",
+  "strategy": "single",
+  "task": "todo",
+  "startedAt": "2026-08-18T06:56:08.768Z",
+  "finishedAt": "2026-08-18T06:57:32.417Z",
+  "rounds": 1,
+  "history": [
+    {
+      "round": 0,
+      "verdict": "PASS",
+      "passed": 19,
+      "total": 19
+    }
+  ],
+  "final": {
+    "verdict": "PASS",
+    "passed": 19,
+    "total": 19,
+    "failed": [],
+    "report": "/Users/yuanjinggongsheng/Documents/Codex/2026-08-16/de/work/dsh-verify/arena/work/todo-out/report.html"
+  }
+}

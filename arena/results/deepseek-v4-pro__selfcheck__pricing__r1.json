@@ -1,0 +1,24 @@
+{
+  "id": "deepseek-v4-pro__selfcheck__pricing__r1",
+  "model": "deepseek-v4-pro",
+  "strategy": "selfcheck",
+  "task": "pricing",
+  "startedAt": "2026-08-18T06:56:22.521Z",
+  "finishedAt": "2026-08-18T07:02:34.368Z",
+  "rounds": 1,
+  "history": [
+    {
+      "round": 0,
+      "verdict": "PASS",
+      "passed": 22,
+      "total": 22
+    }
+  ],
+  "final": {
+    "verdict": "PASS",
+    "passed": 22,
+    "total": 22,
+    "failed": [],
+    "report": "/Users/yuanjinggongsheng/Documents/Codex/2026-08-16/de/work/dsh-verify/arena/work/pricing-out/report.html"
+  }
+}

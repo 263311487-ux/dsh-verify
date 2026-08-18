@@ -17,7 +17,7 @@ th, td { padding:12px 14px; text-align:left; border-bottom:1px solid #21262d; }
 th { color:#8b949e; font-weight:600; font-size:13px; text-transform:uppercase; letter-spacing:.5px; }
 .setup .model { display:block; font-weight:700; }
 .setup .strat { color:#8b949e; font-size:13px; }
-td.pass { color:#3fb950; } td.fail { color:#f85149; } td.err { color:#d29922; } td.na { color:#484f58; }
+td.pass { color:#3fb950; } td.fail { color:#f85149; } td.mixed { color:#d29922; } td.na { color:#484f58; }
 td.sum { font-weight:700; }
 .hl { background:#161b22; border:1px solid #30363d; border-radius:10px; padding:18px 20px; margin-top:28px; font-size:15px; }
 .hl b { color:#3fb950; }
@@ -34,25 +34,25 @@ a { color:#58a6ff; text-decoration:none; } a:hover { text-decoration:underline; 
 <div class="sub">Can AI agents ship <i>working</i> web apps? Graded by <a href="https://github.com/263311487-ux/dsh-verify">dsh-verify</a> in a real browser. No LLM judges — the browser is the judge.</div>
 <hr class="rule">
 <div class="headline">
-<div class="bignum">11/12</div>
-<p>runs passed the real-browser acceptance checks in this seed batch (2026-08-17).</p>
+<div class="bignum">44/48</div>
+<p>runs passed the real-browser acceptance checks (each cell run 4×, batch date 2026-08-18).</p>
 </div>
 <table>
 <thead><tr><th>Agent setup</th><th>Todo app</th><th>Pricing calculator</th><th>Signup form</th><th>Pass</th></tr></thead>
-<tbody><tr><td class="setup"><span class="model">DeepSeek v4-flash</span><span class="strat">self-check loop</span></td><td class="pass"><b>19/19</b></td><td class="pass"><b>22/22</b></td><td class="pass"><b>18/18</b></td><td class="sum">3/3</td></tr><tr><td class="setup"><span class="model">DeepSeek v4-flash</span><span class="strat">single shot</span></td><td class="fail"><b>9/19</b></td><td class="pass"><b>22/22</b></td><td class="pass"><b>18/18</b></td><td class="sum">2/3</td></tr><tr><td class="setup"><span class="model">DeepSeek v4-pro</span><span class="strat">self-check loop</span></td><td class="pass"><b>19/19</b></td><td class="pass"><b>22/22</b></td><td class="pass"><b>18/18</b></td><td class="sum">3/3</td></tr><tr><td class="setup"><span class="model">DeepSeek v4-pro</span><span class="strat">single shot</span></td><td class="pass"><b>19/19</b></td><td class="pass"><b>22/22</b></td><td class="pass"><b>18/18</b></td><td class="sum">3/3</td></tr></tbody>
+<tbody><tr><td class="setup"><span class="model">DeepSeek v4-flash</span><span class="strat">self-check loop</span></td><td class="pass"><b>4/4</b></td><td class="mixed"><b>3/4</b></td><td class="pass"><b>4/4</b></td><td class="sum">11/12</td></tr><tr><td class="setup"><span class="model">DeepSeek v4-flash</span><span class="strat">single shot</span></td><td class="mixed"><b>3/4</b></td><td class="pass"><b>4/4</b></td><td class="pass"><b>4/4</b></td><td class="sum">11/12</td></tr><tr><td class="setup"><span class="model">DeepSeek v4-pro</span><span class="strat">self-check loop</span></td><td class="pass"><b>4/4</b></td><td class="pass"><b>4/4</b></td><td class="pass"><b>4/4</b></td><td class="sum">12/12</td></tr><tr><td class="setup"><span class="model">DeepSeek v4-pro</span><span class="strat">single shot</span></td><td class="mixed"><b>3/4</b></td><td class="mixed"><b>3/4</b></td><td class="pass"><b>4/4</b></td><td class="sum">10/12</td></tr></tbody>
 </table>
-<div class="hl"><b>The one failure was a</b> "Todo app" task: DeepSeek v4-flash single-shot shipped an app with <b>0 seeded todos</b> and <b>9/19</b> checks failed; the same model with a real-browser self-check loop passed <b>19/19</b>. Agents self-test and pass; real browsers tell the truth.</div>
+<div class="hl">DeepSeek v4-flash single-shot passed the todo task <b>3/4</b> runs; with a real-browser self-check loop it passed <b>4/4</b>. Agents self-test and pass; real browsers tell the truth.</div>
 <h2>Methodology</h2>
 <ul class="method">
 <li>Every setup gets the <b>same task prompt</b>, the same spec of human checks, the same temperature (0.7), and the same budget (≤ 2 self-check fix rounds).</li>
 <li>Grading is <b>deterministic</b>: a real headless Chromium clicks, types, reads computed styles and localStorage. No LLM grades the outcome.</li>
-<li>One run per cell for this seed. <b>LLM output is nondeterministic</b> — a cell can flip on re-run (it happened to us). Re-run to reproduce.</li>
-<li>Seed batch date: 2026-08-17. Tasks and specs are in the repo at <code>arena/tasks/</code>; results at <code>arena/results/</code>.</li>
+<li>Each cell is run <b>4×</b> because LLM output is nondeterministic — a single run can flip.</li>
+<li>Tasks and specs live in <code>arena/tasks/</code>; raw per-run results in <code>arena/results/</code>.</li>
 </ul>
 <h2>Run your own agent</h2>
 <pre># add your agent adapter to arena/run.mjs, then:
-node arena/run.mjs --agent deepseek-v4-flash/selfcheck --task all
-node arena/run.mjs --agent &lt;your-model&gt;/single --task all
+node arena/run.mjs --agent &lt;your-model&gt;/single --task all --repeat 3
+node arena/run.mjs --agent &lt;your-model&gt;/selfcheck --task all --repeat 3
 node arena/leaderboard.mjs   # regenerate this page</pre>
 <p class="meta">Bring your own model, harness, or framework — the checks are the same for everyone.</p>
 <div class="footer">Built with <a href="https://github.com/263311487-ux/dsh-verify">dsh-verify</a> · MIT · <a href="https://github.com/263311487-ux/dsh-verify/tree/main/arena">source</a></div>

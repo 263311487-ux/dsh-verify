@@ -1,0 +1,24 @@
+{
+  "id": "deepseek-v4-pro__single__form__r3",
+  "model": "deepseek-v4-pro",
+  "strategy": "single",
+  "task": "form",
+  "startedAt": "2026-08-18T06:56:08.768Z",
+  "finishedAt": "2026-08-18T07:16:59.430Z",
+  "rounds": 1,
+  "history": [
+    {
+      "round": 0,
+      "verdict": "PASS",
+      "passed": 18,
+      "total": 18
+    }
+  ],
+  "final": {
+    "verdict": "PASS",
+    "passed": 18,
+    "total": 18,
+    "failed": [],
+    "report": "/Users/yuanjinggongsheng/Documents/Codex/2026-08-16/de/work/dsh-verify/arena/work/form-out/report.html"
+  }
+}

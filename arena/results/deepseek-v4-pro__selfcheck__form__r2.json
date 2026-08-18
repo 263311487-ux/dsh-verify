@@ -1,0 +1,30 @@
+{
+  "id": "deepseek-v4-pro__selfcheck__form__r2",
+  "model": "deepseek-v4-pro",
+  "strategy": "selfcheck",
+  "task": "form",
+  "startedAt": "2026-08-18T06:56:22.521Z",
+  "finishedAt": "2026-08-18T07:07:41.333Z",
+  "rounds": 2,
+  "history": [
+    {
+      "round": 0,
+      "verdict": "FAIL",
+      "passed": 13,
+      "total": 18
+    },
+    {
+      "round": 1,
+      "verdict": "PASS",
+      "passed": 18,
+      "total": 18
+    }
+  ],
+  "final": {
+    "verdict": "PASS",
+    "passed": 18,
+    "total": 18,
+    "failed": [],
+    "report": "/Users/yuanjinggongsheng/Documents/Codex/2026-08-16/de/work/dsh-verify/arena/work/form-out/report.html"
+  }
+}

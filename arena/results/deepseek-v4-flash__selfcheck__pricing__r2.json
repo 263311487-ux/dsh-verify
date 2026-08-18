@@ -1,0 +1,19 @@
+{
+  "id": "deepseek-v4-flash__selfcheck__pricing__r2",
+  "model": "deepseek-v4-flash",
+  "strategy": "selfcheck",
+  "task": "pricing",
+  "startedAt": "2026-08-18T06:55:55.469Z",
+  "finishedAt": "2026-08-18T07:01:18.850Z",
+  "rounds": 0,
+  "history": [],
+  "final": {
+    "verdict": "ERROR",
+    "passed": 0,
+    "total": 0,
+    "failed": [
+      "\"undefined\" is not valid JSON"
+    ],
+    "report": null
+  }
+}

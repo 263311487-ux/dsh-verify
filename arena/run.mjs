@@ -26,6 +26,7 @@ function arg(name, def) {
 }
 const agentArg = arg("--agent");
 const taskArg = arg("--task", "all");
+const repeat = Math.max(1, Number(arg("--repeat", "1")) || 1);
 const [modelArg, strategyArg] = agentArg ? agentArg.split("/") : [null, null];
 if (!MODELS.includes(modelArg)) {
   console.error(`usage: --agent ${MODELS.map(m => m + "/single|" + m + "/selfcheck").join(" | ")}`);
@@ -90,7 +91,8 @@ async function grade(task, serveDir) {
 const startedAt = new Date().toISOString();
 const results = [];
 for (const task of tasks) {
-  const runId = `${modelArg}__${strategy}__${task}`;
+  for (let rep = 1; rep <= repeat; rep++) {
+  const runId = `${modelArg}__${strategy}__${task}__r${rep}`;
   const work = join(workDir, runId);
   await rm(work, { recursive: true, force: true });
   await mkdir(work, { recursive: true });
@@ -129,5 +131,6 @@ for (const task of tasks) {
   results.push(record);
   await mkdir(resultsDir, { recursive: true });
   await writeFile(join(resultsDir, runId + ".json"), JSON.stringify(record, null, 2));
+  }
 }
 console.log("done:", results.map(r => `${r.id}=${r.final.verdict}(${r.final.passed}/${r.final.total})`).join(" "));
