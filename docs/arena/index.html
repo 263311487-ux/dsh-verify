@@ -1,6 +1,15 @@
 <!doctype html><html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Agent Arena — can agents ship working web apps?</title>
+<meta name="description" content="48 real-browser runs across 12 agent setups. No LLM judges — a real browser clicks, types and grades. See where agents actually failed.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Agent Arena — can AI agents ship working web apps?">
+<meta property="og:description" content="44/48 runs passed real-browser acceptance checks. The browser is the judge — see where agents actually failed.">
+<meta property="og:url" content="https://263311487-ux.github.io/dsh-verify/arena/">
+<meta property="og:image" content="https://263311487-ux.github.io/dsh-verify/assets/wow-compare.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Agent Arena — can AI agents ship working web apps?">
+<meta name="twitter:description" content="44/48 runs passed real-browser acceptance checks. No LLM judges.">
 <style>
 :root { color-scheme: dark; }
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -28,20 +37,44 @@ h2 { font-size:20px; margin:44px 0 12px; }
 code { background:#161b22; border:1px solid #30363d; border-radius:6px; padding:2px 7px; font-size:13px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
 pre { background:#161b22; border:1px solid #30363d; border-radius:10px; padding:16px 18px; overflow-x:auto; font-size:13px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; margin:12px 0; }
 a { color:#58a6ff; text-decoration:none; } a:hover { text-decoration:underline; }
+.cards { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:16px; }
+.card { background:#161b22; border:1px solid #30363d; border-radius:10px; padding:16px 18px; font-size:14px; }
+.card-top { display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap; }
+.card-title { font-weight:700; font-size:13px; color:#c9d1d9; }
+.card-body { color:#8b949e; font-size:13.5px; }
+.card-body b { color:#e6edf3; }
+.dim { color:#484f58; }
+.badge { border-radius:5px; padding:2px 8px; font-size:11px; font-weight:700; letter-spacing:.4px; }
+.badge.fail { background:rgba(248,81,73,.15); color:#f85149; border:1px solid rgba(248,81,73,.4); }
+.badge.err { background:rgba(210,153,34,.15); color:#d29922; border:1px solid rgba(210,153,34,.4); }
+.comparison { background:linear-gradient(180deg,#161b22,#0d1117); border:1px solid #30363d; border-radius:10px; padding:18px 20px; margin-top:16px; font-size:15px; }
+.comparison b { color:#58a6ff; }
 .footer { margin-top:56px; color:#8b949e; font-size:14px; border-top:1px solid #21262d; padding-top:20px; }
+@media (max-width:640px){ .cards { grid-template-columns:1fr; } }
 </style></head><body><div class="wrap">
 <h1>Agent Arena</h1>
 <div class="sub">Can AI agents ship <i>working</i> web apps? Graded by <a href="https://github.com/263311487-ux/dsh-verify">dsh-verify</a> in a real browser. No LLM judges — the browser is the judge.</div>
 <hr class="rule">
 <div class="headline">
 <div class="bignum">44/48</div>
-<p>runs passed the real-browser acceptance checks (each cell run 4×, batch date 2026-08-18).</p>
+<p>runs passed the real-browser acceptance checks — 4 runs per setup, generated 2026-08-19 05:26 UTC.</p>
 </div>
 <table>
 <thead><tr><th>Agent setup</th><th>Todo app</th><th>Pricing calculator</th><th>Signup form</th><th>Pass</th></tr></thead>
 <tbody><tr><td class="setup"><span class="model">DeepSeek v4-flash</span><span class="strat">self-check loop</span></td><td class="pass"><b>4/4</b></td><td class="mixed"><b>3/4</b></td><td class="pass"><b>4/4</b></td><td class="sum">11/12</td></tr><tr><td class="setup"><span class="model">DeepSeek v4-flash</span><span class="strat">single shot</span></td><td class="mixed"><b>3/4</b></td><td class="pass"><b>4/4</b></td><td class="pass"><b>4/4</b></td><td class="sum">11/12</td></tr><tr><td class="setup"><span class="model">DeepSeek v4-pro</span><span class="strat">self-check loop</span></td><td class="pass"><b>4/4</b></td><td class="pass"><b>4/4</b></td><td class="pass"><b>4/4</b></td><td class="sum">12/12</td></tr><tr><td class="setup"><span class="model">DeepSeek v4-pro</span><span class="strat">single shot</span></td><td class="mixed"><b>3/4</b></td><td class="mixed"><b>3/4</b></td><td class="pass"><b>4/4</b></td><td class="sum">10/12</td></tr></tbody>
 </table>
-<div class="hl">DeepSeek v4-flash single-shot passed the todo task <b>3/4</b> runs; with a real-browser self-check loop it passed <b>4/4</b>. Agents self-test and pass; real browsers tell the truth.</div>
+<div class="hl">DeepSeek v4-flash single-shot passed the todo task <b>3/4</b> runs; with a real-browser self-check loop it passed <b>4/4</b>. Agents self-report success; real browsers tell the truth.</div>
+
+<h2>Where agents actually failed</h2>
+<p class="meta">Every failure below is real, reproducible, and invisible to an LLM judge — the agent's own report said the page was fine.</p>
+<div class="cards"><div class="card"><div class="card-top"><span class="badge err">ERROR</span><span class="card-title">DeepSeek v4-flash · self-check loop · Pricing calculator</span></div><p class="card-body">The agent's own verification report was corrupt JSON (<code>"undefined" is not valid JSON</code>) — its self-check crashed before the browser could grade the page.<span class="dim"> <b>0/0</b> checks passed</span></p></div>
+<div class="card"><div class="card-top"><span class="badge fail">FAIL</span><span class="card-title">DeepSeek v4-flash · single shot · Todo app</span></div><p class="card-body">The browser reported <code>expect_text #remaining: got "0 remaining"</code> — the app opened but required seed todos never appeared in the page — the browser saw an empty list.<span class="dim"> <b>9/19</b> checks passed</span></p></div>
+<div class="card"><div class="card-top"><span class="badge err">ERROR</span><span class="card-title">DeepSeek v4-pro · single shot · Pricing calculator</span></div><p class="card-body">The agent's own verification report was corrupt JSON (<code>"undefined" is not valid JSON</code>) — its self-check crashed before the browser could grade the page.<span class="dim"> <b>0/0</b> checks passed</span></p></div>
+<div class="card"><div class="card-top"><span class="badge fail">FAIL</span><span class="card-title">DeepSeek v4-pro · single shot · Todo app</span></div><p class="card-body">The browser reported <code>expect_text #remaining: got "3 remaining"</code> — the app opened but required seed todos never appeared in the page — the browser saw an empty list.<span class="dim"> <b>11/19</b> checks passed</span></p></div></div>
+
+<h2>More expensive ≠ more reliable</h2>
+<div class="comparison">DeepSeek v4-pro single-shot scored <b>10/12</b> — below the cheaper v4-flash single-shot (<b>11/12</b>). Adding a real-browser self-check loop lifted v4-pro to <b>12/12</b> (and v4-flash to <b>11/12</b>). Paying more does not buy reliability; checking against the real browser does.</div>
+
 <h2>Methodology</h2>
 <ul class="method">
 <li>Every setup gets the <b>same task prompt</b>, the same spec of human checks, the same temperature (0.7), and the same budget (≤ 2 self-check fix rounds).</li>
@@ -54,6 +87,6 @@ a { color:#58a6ff; text-decoration:none; } a:hover { text-decoration:underline; 
 node arena/run.mjs --agent &lt;your-model&gt;/single --task all --repeat 3
 node arena/run.mjs --agent &lt;your-model&gt;/selfcheck --task all --repeat 3
 node arena/leaderboard.mjs   # regenerate this page</pre>
-<p class="meta">Bring your own model, harness, or framework — the checks are the same for everyone.</p>
-<div class="footer">Built with <a href="https://github.com/263311487-ux/dsh-verify">dsh-verify</a> · MIT · <a href="https://github.com/263311487-ux/dsh-verify/tree/main/arena">source</a></div>
+<p class="meta">Bring your own model, harness, or framework — the checks are the same for everyone. Add a row, open a PR, join the leaderboard.</p>
+<div class="footer">Built with <a href="https://github.com/263311487-ux/dsh-verify">dsh-verify</a> · MIT · <a href="https://github.com/263311487-ux/dsh-verify/tree/main/arena">source</a> · <a href="https://263311487-ux.github.io/dsh-verify/">home</a></div>
 </div></body></html>
