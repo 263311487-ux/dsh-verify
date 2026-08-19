@@ -1,6 +1,6 @@
 {
   "name": "dsh-verify",
-  "version": "0.8.8",
+  "version": "0.8.9",
   "description": "Witness — the quality gate for agent-built web apps. Independent browser acceptance testing: CLI, MCP, AI-drafted checklists, visual regression, multi-browser. Agents self-test and pass; real browsers tell the truth.",
   "keywords": [
     "deepseek",

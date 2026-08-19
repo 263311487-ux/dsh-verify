@@ -339,6 +339,9 @@ async function main() {
   }
 
   const allOk = results.length > 0 && results.every((r) => r.ok);
+  if (!has('json') && results.length > 0) {
+    console.log(`\nWitness — useful? ⭐ star the repo: https://github.com/263311487-ux/dsh-verify`);
+  }
   if (has('json')) {
     process.stdout.write(JSON.stringify({
       verdict: allOk ? 'PASS' : 'FAIL',
