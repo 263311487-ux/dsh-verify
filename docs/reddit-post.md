@@ -16,7 +16,7 @@ In a real browser, the toggle did nothing. The JS toggled a `.dark` class, but t
 
 That gap is structural, not a skill issue: agent teams verify against a *shared belief* about the code, not against the *user's experience*. The only fix is an independent check that doesn't share the team's blind spots.
 
-So I built **dsh-verify** (MIT, ~zero deps, npm + GitHub Action + MCP server):
+So I built **Witness** (`dsh-verify` on npm/GitHub — MIT, ~zero deps, npm + GitHub Action + MCP server):
 
 - Write a JSON checklist of what a human would check: `goto → click → expect_text → capture_style → expect_style_changed`
 - It drives real headless Chromium and asserts **computed styles**, not DOM class lists (that's the check that catches "class toggled but CSS never written")

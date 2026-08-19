@@ -19,7 +19,7 @@ Same model, same task, 4 runs: passed 3, failed silently on the 1st. That's the 
 
 The self-check loop (agent sees real browser failures, gets 1-2 fix rounds) turned the flakiest cell from 3/4 to 4/4.
 
-Everything is open: specs, tasks, reference implementations, per-run results, and the grading engine (dsh-verify — a JSON checklist in, a real Chromium verdict out, with screenshot receipts). Bring your own agent and add it to the board.
+Everything is open: specs, tasks, reference implementations, per-run results, and the grading engine (**Witness**, package `dsh-verify` — a JSON checklist in, a real Chromium verdict out, with screenshot receipts). Bring your own agent and add it to the board.
 
 - Live leaderboard: https://263311487-ux.github.io/dsh-verify/arena/
 - Source: https://github.com/263311487-ux/dsh-verify

@@ -1,11 +1,11 @@
 # Community post draft — "Agents self-test and pass. Real browsers tell the truth."
 
 > Status: draft, ready for review before posting to deepseek-harness discussions / r/LocalLLaMA / HN.
-> Author note: this is the story that ships with dsh-verify (github.com/263311487-ux/dsh-verify).
+> Author note: this is the story that ships with **Witness** — the product name of the open-source tool `dsh-verify` (github.com/263311487-ux/dsh-verify).
 
 ---
 
-**TL;DR** — We ran a 4-agent web team inside DeepSeek Harness. The team self-reviewed as "no issues found". In a real browser, the dark-mode toggle button did nothing: the `.dark` class was toggled by JS, but the CSS rule for `.dark` was never written. We turned that failure into a tiny open-source tool: **dsh-verify** — write a JSON spec of what a human would check, it drives a real headless Chromium, and returns an HTML report + exit code. Buggy build FAILS, fixed build PASSES, same page, one missing CSS rule.
+**TL;DR** — We ran a 4-agent web team inside DeepSeek Harness. The team self-reviewed as "no issues found". In a real browser, the dark-mode toggle button did nothing: the `.dark` class was toggled by JS, but the CSS rule for `.dark` was never written. We turned that failure into a tiny open-source tool: **Witness** (`dsh-verify` on npm/GitHub) — write a JSON spec of what a human would check, it drives a real headless Chromium, and returns an HTML report + exit code. Buggy build FAILS, fixed build PASSES, same page, one missing CSS rule.
 
 ## Why this matters for the agent ecosystem
 
@@ -23,7 +23,7 @@ Our reproduction of the failure chain:
 
 The gap is structural, not a skill issue: agent teams verify against a shared belief, not against the user's experience. The only fix is an **independent** check that does not share the team's blind spots.
 
-## What dsh-verify does (now)
+## What Witness does (now)
 
 - JSON spec, no framework: `goto` → `click` → `expect_text` → `capture_style` → `expect_style_changed`
 - Real Chromium via Playwright (headless by default)
@@ -58,7 +58,7 @@ We researched the agent-tooling community before building. Existing "verificatio
 - **Static lint / unit tests** — validate code the agent wrote, not behavior the user sees
 - **Screenshot-only agents** — look at a picture, don't assert behavior
 
-None of them answer: *"When I click this button, does the user see the change?"* That's the niche dsh-verify fills — deliberately small, JSON in, browser verdict out.
+None of them answer: *"When I click this button, does the user see the change?"* That's the niche Witness fills — deliberately small, JSON in, browser verdict out.
 
 ## Try it (2 minutes)
 

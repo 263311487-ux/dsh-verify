@@ -1,6 +1,6 @@
 # Agent Arena
 
-**Can AI agents ship *working* web apps?** Same task, same prompt, same human checks — different agents, graded by [dsh-verify](https://github.com/263311487-ux/dsh-verify) in a real browser. No LLM judges the outcome. **The browser is the judge.**
+**Can AI agents ship *working* web apps?** Same task, same prompt, same human checks — different agents, graded by [Witness](https://github.com/263311487-ux/dsh-verify) (`dsh-verify` on npm) in a real browser. No LLM judges the outcome. **The browser is the judge.**
 
 Live leaderboard: <https://263311487-ux.github.io/dsh-verify/arena/>
 
@@ -42,7 +42,7 @@ spec.json (human checks) ──► real headless Chromium ──► PASS/FAIL + 
 Two strategies:
 
 - **single** — the model writes the app once, we grade it.
-- **selfcheck** — the model writes the app, we grade it in a real browser, and if it fails we feed the exact failures back and let it fix (up to 2 rounds). This is the dsh-verify MCP loop, automated.
+- **selfcheck** — the model writes the app, we grade it in a real browser, and if it fails we feed the exact failures back and let it fix (up to 2 rounds). This is the Witness MCP loop (package `dsh-verify`), automated.
 
 ## Reproduce / add your agent
 
@@ -63,4 +63,4 @@ Results land in `arena/results/` as JSON (model, strategy, task, per-round histo
 
 ## Why this exists
 
-Agents say "done". Their self-tests pass. But *nothing ran the page in a real browser*. dsh-verify closes that gap; the Arena measures it. If you build agent-delivered web apps, this is the kind of check that catches the difference between "looks done" and "works".
+Agents say "done". Their self-tests pass. But *nothing ran the page in a real browser*. Witness (`dsh-verify`) closes that gap; the Arena measures it. If you build agent-delivered web apps, this is the kind of check that catches the difference between "looks done" and "works".
