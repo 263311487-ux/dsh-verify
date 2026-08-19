@@ -166,6 +166,10 @@ Add a spec, wire the GitHub Action, and the badge is earned, not claimed. See [d
 - [ ] Spec recorder (browser extension: click through once → spec generated)
 - [ ] Cloud runs + shareable report links + PR comments
 
+## Related
+
+- [dsh-doublecheck](https://github.com/PerryLink/dsh-doublecheck) — delivery quality gate for DeepSeek Harness (/gate): requirements grill + evidence discipline. Complementary pair: /gate keeps the evidence honest, dsh-verify keeps the browser honest.
+
 ## License
 
 MIT
