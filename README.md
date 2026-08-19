@@ -143,7 +143,7 @@ The repo's own CI runs exactly that — engine self-tests, then asserts fixed **
 
 ## Agent Arena — can agents ship working web apps?
 
-Same task, same prompt, same human checks — different agents, graded by dsh-verify in a real browser. Latest run (2026-08-18): **44/48 runs passed** across 4 agents × 4 tasks. The one failure: DeepSeek v4-flash single-shot shipped a todo app with 0 seeded todos (9/19 checks failed); with a real-browser self-check loop the same model passed **19/19**.
+Same task, same prompt, same human checks — different agents, graded by dsh-verify in a real browser. Latest run (2026-08-19): **44/48 runs passed** across 2 models × 2 strategies × 3 tasks, 4 runs per cell. Two counterintuitive findings: the pricier **v4-pro single-shot scored below the cheaper v4-flash single-shot** (10/12 vs 11/12), and a real-browser self-check loop lifted v4-pro to **12/12** — while v4-flash's self-check crashed once when its own verification report came back as corrupt JSON. Every failure is reproducible and invisible to an LLM judge.
 
 [![Agent Arena](https://img.shields.io/badge/Agent%20Arena-live-3fb950)](https://263311487-ux.github.io/dsh-verify/arena/)
 
@@ -169,6 +169,7 @@ Add a spec, wire the GitHub Action, and the badge is earned, not claimed. See [d
 ## Related
 
 - [dsh-doublecheck](https://github.com/PerryLink/dsh-doublecheck) — delivery quality gate for DeepSeek Harness (/gate): requirements grill + evidence discipline. Complementary pair: /gate keeps the evidence honest, dsh-verify keeps the browser honest.
+- Featured in the DeepSeek Harness community — [Show Your Plugins: dsh-verify](https://github.com/deepseek-ai/deepseek-harness/discussions/2806) (48-run Agent Arena results in-thread)
 
 ## License
 
