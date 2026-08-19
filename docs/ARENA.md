@@ -44,22 +44,52 @@ Two strategies:
 - **single** — the model writes the app once, we grade it.
 - **selfcheck** — the model writes the app, we grade it in a real browser, and if it fails we feed the exact failures back and let it fix (up to 2 rounds). This is the Witness MCP loop (package `dsh-verify`), automated.
 
-## Reproduce / add your agent
+## Enter the Arena (bring your own agent)
+
+The board is **open entry**: run your model on the same 3 tasks with the same
+human checks, and your setup appears on the leaderboard with your GitHub name.
 
 ```bash
 git clone https://github.com/263311487-ux/dsh-verify && cd dsh-verify
 npm install && npx playwright install chromium
-export DEEPSEEK_API_KEY=sk-...
 
+# Any OpenAI-compatible model: DeepSeek, Claude, GPT, Qwen, local vLLM...
+export LLM_API_KEY=sk-...                 # your key
+export LLM_BASE_URL=https://api.deepseek.com/v1/chat/completions   # default = DeepSeek
+export GITHUB_USER=yourname               # shown as "Submitted by @yourname"
+
+# Run all 3 tasks, single-shot or with the self-check loop:
+node arena/run.mjs --agent deepseek-v4-flash/single    --task all --repeat 1 --submitter yourname
+node arena/run.mjs --agent "claude-sonnet-4-5/selfcheck" --task all --repeat 1 --submitter yourname
+```
+
+Each run writes `arena/results/<model>__<strategy>__<task>__r1.json` (model,
+strategy, task, per-round history, final verdict, failures) plus a `--model-label
+"My Model"` option for display names.
+
+### Submit your results (2 ways)
+
+1. **PR** (preferred): open a pull request adding your result JSON files from
+   `arena/results/`. A maintainer merges them and the leaderboard updates.
+   Use the PR template at `.github/PULL_REQUEST_TEMPLATE/arena-entry.md`.
+2. **Issue**: open an issue with the JSON files attached and a maintainer will
+   add them.
+
+Rules, kept deliberately short:
+- Run `--repeat 1` per task, temperature 0.7 (the runner default), no cherry-picking.
+- Same 3 tasks, same `spec.json` checks for everyone — that is the whole point.
+- The browser is the judge; no LLM reviews your submission.
+
+### Reproduce the existing board
+
+```bash
 node arena/run.mjs --agent deepseek-v4-flash/single --task all
 node arena/run.mjs --agent deepseek-v4-pro/selfcheck --task all
-
 node arena/leaderboard.mjs   # regenerate the page
 ```
 
-To add an agent: drop a new adapter into `arena/run.mjs` (the model call is the only agent-specific part — swap the `chat()` provider for your model/harness) and run. The checks are the same for everyone.
-
-Results land in `arena/results/` as JSON (model, strategy, task, per-round history, final verdict, failures). Raw evidence is reproducible: each attempt's `index.html` and the model reply are kept locally in `arena/work/` (not committed).
+Raw evidence is reproducible: each attempt's `index.html` and the model reply
+are kept locally in `arena/work/` (not committed).
 
 ## Why this exists
 

@@ -136,6 +136,22 @@ A self-contained HTML report — every step with a pass/fail badge, selector, an
 
 ![dsh-verify report](assets/report-screenshot.png)
 
+## Agent Arena — bring your agent
+
+Real-browser benchmark for agent-built web apps: same 3 tasks, same human
+checks, **open entry**. Run your model on the board in ~10 minutes:
+
+```bash
+git clone https://github.com/263311487-ux/dsh-verify && cd dsh-verify
+npm install && npx playwright install chromium
+export LLM_API_KEY=sk-...          # any OpenAI-compatible model
+node arena/run.mjs --agent "gpt-5/single" --task all --repeat 1 --submitter yourname
+```
+
+Your setup appears on the live leaderboard next to DeepSeek v4-flash / v4-pro:
+[agent-arena](https://263311487-ux.github.io/dsh-verify/arena/).
+Full rules in [docs/ARENA.md](docs/ARENA.md).
+
 ## Prove it (run it yourself)
 
 ```bash

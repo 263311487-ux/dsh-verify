@@ -17,7 +17,10 @@ const tasksDir = join(root, "arena", "tasks");
 const resultsDir = join(root, "arena", "results");
 const workDir = join(root, "arena", "work");
 const TASKS = ["todo", "pricing", "form"];
-const MODELS = ["deepseek-v4-flash", "deepseek-v4-pro"];
+// Open entry: any OpenAI-compatible model name is welcome (e.g. deepseek-v4-flash,
+// claude-sonnet-4-5, gpt-5, qwen3-coder). Model names become filenames, so keep
+// them filesystem-safe: letters, digits, dot, dash, underscore.
+const MODEL_RE = /^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$/;
 const MAX_ROUNDS = 2; // selfcheck: up to 2 fix rounds after the first attempt
 
 function arg(name, def) {
@@ -28,12 +31,16 @@ const agentArg = arg("--agent");
 const taskArg = arg("--task", "all");
 const repeat = Math.max(1, Number(arg("--repeat", "1")) || 1);
 const [modelArg, strategyArg] = agentArg ? agentArg.split("/") : [null, null];
-if (!MODELS.includes(modelArg)) {
-  console.error(`usage: --agent ${MODELS.map(m => m + "/single|" + m + "/selfcheck").join(" | ")}`);
+if (!modelArg || !MODEL_RE.test(modelArg)) {
+  console.error(`usage: --agent <model>/<single|selfcheck>  e.g. --agent deepseek-v4-flash/single`);
+  console.error(`  any OpenAI-compatible model works; set LLM_API_KEY (and LLM_BASE_URL if not DeepSeek)`);
   process.exit(1);
 }
 const tasks = taskArg === "all" ? TASKS : taskArg.split(",");
 const strategy = strategyArg === "selfcheck" ? "selfcheck" : "single";
+// Optional credit for the leaderboard: --submitter <github-username> --model-label "My model"
+const submitter = arg("--submitter", process.env.GITHUB_USER || "");
+const modelLabel = arg("--model-label", "");
 
 const SYSTEM = `You are a frontend engineer. You write clean, working, self-contained HTML files.
 Follow the task requirements EXACTLY: required element ids, exact behavior, exact texts.
@@ -120,6 +127,8 @@ for (const task of tasks) {
   const record = {
     id: runId,
     model: modelArg,
+    modelLabel: modelLabel || undefined,
+    submitter: submitter || undefined,
     strategy,
     task,
     startedAt,

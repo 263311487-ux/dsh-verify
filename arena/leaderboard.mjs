@@ -21,12 +21,14 @@ const BASE_URL = "https://263311487-ux.github.io/dsh-verify";
 
 // Aggregate by (model, strategy, task)
 const cells = {}; // "model/strategy/task" -> {pass, total, fails:[]}
+const submitters = {}; // "model/strategy" -> github handle
 for (const r of records) {
   const key = `${r.model}/${r.strategy}/${r.task}`;
   cells[key] = cells[key] || { pass: 0, total: 0, fails: [] };
   cells[key].total++;
   if (r.final.verdict === "PASS") cells[key].pass++;
   else cells[key].fails.push(r);
+  if (r.submitter) submitters[`${r.model}/${r.strategy}`] = r.submitter;
 }
 
 const setups = [...new Set(Object.keys(cells).map(k => k.split("/").slice(0, 2).join("/")))].sort();
@@ -40,7 +42,9 @@ const rows = setups.map(key => {
   const [model, strategy] = key.split("/");
   let pass = 0, total = 0;
   for (const t of tasks) { const c = cells[`${model}/${strategy}/${t}`]; if (c) { pass += c.pass; total += c.total; } }
-  return `<tr><td class="setup"><span class="model">${MODEL_DISPLAY[model] || model}</span><span class="strat">${STRAT_DISPLAY[strategy] || strategy}</span></td>${tasks.map(t => cellHtml(model, strategy, t)).join("")}<td class="sum">${pass}/${total}</td></tr>`;
+  const sub = submitters[key];
+  const subCell = sub ? `<td class="dim">@${sub}</td>` : `<td class="dim">—</td>`;
+  return `<tr><td class="setup"><span class="model">${MODEL_DISPLAY[model] || model}</span><span class="strat">${STRAT_DISPLAY[strategy] || strategy}</span></td>${tasks.map(t => cellHtml(model, strategy, t)).join("")}<td class="sum">${pass}/${total}</td>${subCell}</tr>`;
 }).join("");
 
 let totalPass = 0, total = 0;
@@ -99,7 +103,7 @@ const html = `<!doctype html><html lang="en"><head>
 <meta name="description" content="48 real-browser runs across 12 agent setups. No LLM judges — a real browser clicks, types and grades. See where agents actually failed.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Agent Arena — can AI agents ship working web apps?">
-<meta property="og:description" content="${totalPass}/${total} runs passed real-browser acceptance checks. The browser is the judge — see where agents actually failed.">
+<meta property="og:description" content="${totalPass}/${total} runs passed real-browser acceptance checks. Open entry — bring your own agent and appear on the board. The browser is the judge.">
 <meta property="og:url" content="${BASE_URL}/arena/">
 <meta property="og:image" content="${BASE_URL}/assets/wow-compare.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -116,6 +120,9 @@ h1 { font-size:34px; letter-spacing:-.5px; }
 .headline { margin-top:36px; }
 .bignum { font-size:44px; font-weight:800; color:#3fb950; }
 .headline p { color:#8b949e; margin-top:4px; }
+.enter { margin-top:18px; padding:12px 16px; background:#161b22; border:1px solid #30363d; border-radius:8px; color:#c9d1d9; font-size:15px; }
+.enter a { color:#58a6ff; text-decoration:none; }
+.dim { color:#8b949e; font-size:14px; }
 table { width:100%; border-collapse:collapse; margin-top:20px; font-size:15px; }
 th, td { padding:12px 14px; text-align:left; border-bottom:1px solid #21262d; }
 th { color:#8b949e; font-weight:600; font-size:13px; text-transform:uppercase; letter-spacing:.5px; }
@@ -154,8 +161,9 @@ a { color:#58a6ff; text-decoration:none; } a:hover { text-decoration:underline; 
 <div class="bignum">${totalPass}/${total}</div>
 <p>runs passed the real-browser acceptance checks — ${runsPerCell} runs per setup, generated ${generatedAt}.</p>
 </div>
+<div class="enter"><b>Bring your own agent.</b> Run your model on the same 3 tasks with the same human checks, and your setup appears on this board. <a href="https://github.com/263311487-ux/dsh-verify/blob/main/docs/ARENA.md">How to enter →</a></div>
 <table>
-<thead><tr><th>Agent setup</th><th>${TASK_NAMES.todo}</th><th>${TASK_NAMES.pricing}</th><th>${TASK_NAMES.form}</th><th>Pass</th></tr></thead>
+<thead><tr><th>Agent setup</th><th>${TASK_NAMES.todo}</th><th>${TASK_NAMES.pricing}</th><th>${TASK_NAMES.form}</th><th>Pass</th><th>Submitted by</th></tr></thead>
 <tbody>${rows}</tbody>
 </table>
 <div class="hl">${flashTodoLine} Agents self-report success; real browsers tell the truth.</div>
