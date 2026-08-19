@@ -1,5 +1,9 @@
 # dsh-verify
 
+> **Witness** — The browser is the judge.
+> The quality gate for agent-built web apps. Agents say done; the browser proves it.
+> *(Witness is the product name; `dsh-verify` is the package name — same thing.)*
+
 [![ci](https://github.com/263311487-ux/dsh-verify/actions/workflows/ci.yml/badge.svg)](https://github.com/263311487-ux/dsh-verify/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/dsh-verify)](https://www.npmjs.com/package/dsh-verify)
 [![MCP server](https://glama.ai/mcp/servers/263311487-ux/dsh-verify/badges/score.svg)](https://glama.ai/mcp/servers/263311487-ux/dsh-verify)
