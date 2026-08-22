@@ -16,6 +16,8 @@
 
 `dsh-verify` opens a real browser and checks — so you never have to take the agent's word for it.
 
+![dsh-verify — Agents say done. The browser proves it.](assets/social-card.png)
+
 ![dsh-verify in action](assets/hero.gif)
 
 The quality gate for **agent-built web apps**. Works with any agent — DeepSeek Harness (dsh), Claude Code, Cursor, Copilot, Codex — and with any CI. You write what a human would check in a browser; a real browser executes it and returns a `PASS`/`FAIL` verdict with receipts (screenshots + diff images).
