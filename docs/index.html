@@ -1,0 +1,139 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>dsh-verify (Witness) — real-browser acceptance checks for agent-built web apps</title>
+<meta name="description" content="The quality gate for agent-built web apps. Agents say done; a real browser proves it. CLI, MCP server (Claude Code / Cursor / Copilot), GitHub Action. One command: npx dsh-verify.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="dsh-verify (Witness) — The browser is the judge">
+<meta property="og:description" content="Real-browser acceptance checks for AI-built web apps. Independent witness: click, type, verify styles, catch console errors, visual regression, multi-browser. Works with any agent and any CI.">
+<meta property="og:url" content="https://263311487-ux.github.io/dsh-verify/">
+<meta property="og:image" content="https://263311487-ux.github.io/dsh-verify/assets/wow-compare.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="dsh-verify (Witness) — The browser is the judge">
+<meta name="twitter:description" content="Real-browser acceptance checks for AI-built web apps. Agents say done; the browser proves it.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230d1117'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='%233fb950' font-family='monospace' font-weight='bold'>✓</text></svg>">
+<style>
+:root { color-scheme: dark; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#0d1117; color:#e6edf3; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; line-height:1.65; -webkit-font-smoothing:antialiased; }
+.wrap { max-width:880px; margin:0 auto; padding:0 24px; }
+a { color:#58a6ff; text-decoration:none; } a:hover { text-decoration:underline; }
+code { background:#161b22; border:1px solid #30363d; border-radius:6px; padding:2px 7px; font-size:13px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+pre { background:#161b22; border:1px solid #30363d; border-radius:10px; padding:16px 18px; overflow-x:auto; font-size:13px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; margin:14px 0; color:#c9d1d9; }
+pre .prompt { color:#3fb950; } pre .cmd { color:#e6edf3; } pre .ok { color:#3fb950; font-weight:700; } pre .bad { color:#f85149; font-weight:700; }
+.btn { display:inline-block; background:#238636; color:#fff; font-weight:600; padding:10px 20px; border-radius:8px; margin:6px 8px 6px 0; font-size:15px; }
+.btn:hover { background:#2ea043; text-decoration:none; }
+.btn.ghost { background:transparent; color:#58a6ff; border:1px solid #30363d; }
+.btn.ghost:hover { border-color:#58a6ff; background:#161b22; }
+nav { border-bottom:1px solid #21262d; padding:14px 0; }
+.nav { display:flex; align-items:center; gap:18px; flex-wrap:wrap; font-size:14px; }
+.brand { font-weight:800; font-size:16px; color:#e6edf3; letter-spacing:.3px; }
+.brand .w { color:#3fb950; }
+.nav .sp { flex:1; }
+.nav a { color:#8b949e; font-weight:500; } .nav a:hover { color:#e6edf3; text-decoration:none; }
+header.hero { padding:64px 0 40px; text-align:center; }
+.kicker { display:inline-block; font-size:12.5px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:#3fb950; border:1px solid #238636; border-radius:20px; padding:5px 14px; margin-bottom:18px; }
+h1 { font-size:52px; letter-spacing:-1.5px; font-weight:800; line-height:1.08; }
+h1 .dim { color:#8b949e; font-weight:700; }
+.tagline { color:#8b949e; font-size:19px; margin-top:14px; }
+.tagline b { color:#e6edf3; }
+.heroimg { margin:34px auto 0; max-width:720px; border-radius:12px; border:1px solid #30363d; overflow:hidden; }
+.heroimg img { width:100%; display:block; }
+.install { max-width:640px; margin:30px auto 0; text-align:left; }
+.cta { margin-top:26px; }
+.rule { border:0; border-top:1px solid #21262d; margin:56px 0; }
+h2 { font-size:26px; letter-spacing:-.4px; margin-bottom:8px; }
+.sec-sub { color:#8b949e; font-size:16px; margin-bottom:26px; }
+.problem { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:18px; }
+.card { background:#161b22; border:1px solid #30363d; border-radius:12px; padding:18px 20px; font-size:14.5px; }
+.card h3 { font-size:14px; text-transform:uppercase; letter-spacing:.6px; color:#8b949e; margin-bottom:10px; }
+.card .verdict { font-size:17px; font-weight:800; margin-bottom:6px; }
+.card .pass { color:#3fb950; } .card .fail { color:#f85149; }
+.card p { color:#c9d1d9; }
+.imgfig { margin:26px 0 0; } .imgfig img { width:100%; border-radius:12px; border:1px solid #30363d; } .imgfig figcaption { color:#8b949e; font-size:13.5px; margin-top:10px; }
+.ways { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-top:18px; }
+.way h3 { color:#e6edf3; font-size:16px; margin-bottom:8px; }
+.way h3 span { color:#3fb950; margin-right:8px; }
+.way p { color:#8b949e; font-size:14px; }
+.way .tag { display:inline-block; font-size:11px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; border-radius:5px; padding:3px 9px; margin-bottom:12px; }
+.way .t-cli { color:#58a6ff; background:rgba(88,166,255,.12); border:1px solid rgba(88,166,255,.35); }
+.way .t-mcp { color:#d29922; background:rgba(210,153,34,.12); border:1px solid rgba(210,153,34,.35); }
+.way .t-gh { color:#3fb950; background:rgba(63,185,80,.12); border:1px solid rgba(63,185,80,.35); }
+.quote { border-left:3px solid #3fb950; background:#161b22; border-radius:0 10px 10px 0; padding:16px 20px; margin-top:22px; font-size:15.5px; color:#c9d1d9; }
+.quote b { color:#e6edf3; }
+.ctablock { text-align:center; background:linear-gradient(180deg,#161b22,#0d1117); border:1px solid #30363d; border-radius:16px; padding:44px 24px; margin-top:8px; }
+.ctablock h2 { margin-bottom:10px; }
+.ctablock p { color:#8b949e; margin-bottom:20px; }
+footer { border-top:1px solid #21262d; margin-top:64px; padding:26px 0 60px; color:#484f58; font-size:13px; display:flex; gap:20px; flex-wrap:wrap; }
+footer a { color:#8b949e; }
+@media (max-width:720px){ h1{font-size:36px;} .problem,.ways{grid-template-columns:1fr;} header.hero{padding:44px 0 30px;} }
+</style></head><body>
+<nav><div class="wrap nav">
+  <span class="brand"><span class="w">Witness</span> · dsh-verify</span>
+  <a href="#why">Why</a>
+  <a href="#ways">Ways</a>
+  <a href="#proof">Proof</a>
+  <a href="arena/">Arena</a>
+  <span class="sp"></span>
+  <a href="https://www.npmjs.com/package/dsh-verify">npm</a>
+  <a href="https://glama.ai/mcp/servers/263311487-ux/dsh-verify">MCP</a>
+  <a href="https://github.com/263311487-ux/dsh-verify">GitHub</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <span class="kicker">The browser is the judge</span>
+  <h1>Agents say done.<br><span class="dim">The browser proves it.</span></h1>
+  <p class="tagline">The quality gate for <b>agent-built web apps</b>.<br>One command: a real browser clicks, types, and returns <b>PASS</b>/<b>FAIL</b> with receipts.</p>
+  <div class="heroimg"><img src="assets/hero.gif" alt="dsh-verify runs real-browser acceptance checks and prints PASS/FAIL verdicts"></div>
+  <div class="install"><pre><span class="prompt">$ </span><span class="cmd">npx dsh-verify --spec demo/fixed.json</span>
+dsh-verify: <span class="ok">PASS</span> (6/6) — real Chromium · 2.1s · report → report.html</pre></div>
+  <div class="cta">
+    <a class="btn" href="https://github.com/263311487-ux/dsh-verify#readme">Get started</a>
+    <a class="btn ghost" href="https://www.npmjs.com/package/dsh-verify">npm package</a>
+    <a class="btn ghost" href="https://glama.ai/mcp/servers/263311487-ux/dsh-verify">MCP server</a>
+  </div>
+</div></header>
+
+<hr class="rule"><div class="wrap" id="why">
+  <h2>Why this exists</h2>
+  <p class="sec-sub">An AI agent said "all requirements met." The dark-mode toggle did nothing — one CSS rule was never written.</p>
+  <div class="problem">
+    <div class="card"><h3>demo/buggy — what the agents said</h3><div class="verdict fail">"No issues found"</div><p>Every agent self-test passed, because nothing was on the page for the agents to run. No one opened a real browser.</p></div>
+    <div class="card"><h3>demo/fixed — what a real browser says</h3><div class="verdict pass">FAIL → PASS</div><p>Same page, same JS. One missing CSS rule. The agent's self-review passed; a real browser caught it.</p></div>
+  </div>
+  <figure class="imgfig"><img src="assets/wow-compare.png" alt="Same task, same AI, two builds — only a real browser tells the difference"><figcaption>Same task. Same AI. Two builds. Only a real browser tells the difference.</figcaption></figure>
+  <div class="quote"><b>Agents verify against what they believe they built — not against what a user actually experiences.</b> Unit tests and static checks can't catch a missing CSS rule. dsh-verify re-grades the homework in a real browser.</div>
+</div>
+
+<hr class="rule"><div class="wrap" id="ways">
+  <h2>Use it three ways</h2>
+  <p class="sec-sub">Works with any agent — DeepSeek Harness, Claude Code, Cursor, Copilot, Codex — and any CI.</p>
+  <div class="ways">
+    <div class="card way"><span class="tag t-cli">CLI</span><h3><span>⌘</span>Terminal</h3><p>Write what a human would check in a browser; run <code>npx dsh-verify --spec spec.json</code>. Verdict + screenshots in seconds.</p></div>
+    <div class="card way"><span class="tag t-mcp">MCP</span><h3><span>⇄</span>Agents</h3><p>Connect the MCP server to Claude Code, Cursor or Copilot — agents can self-test against a real browser before saying done.</p></div>
+    <div class="card way"><span class="tag t-gh">CI</span><h3><span>▸</span>GitHub Action</h3><p>One step in any workflow. Installs dsh-verify and Chromium in isolation; your project stays untouched.</p></div>
+  </div>
+</div>
+
+<hr class="rule"><div class="wrap" id="proof">
+  <h2>Receipts, not opinions</h2>
+  <p class="sec-sub">Every run produces a self-contained HTML report with per-step results, screenshots and visual diffs.</p>
+  <figure class="imgfig"><img src="assets/report-screenshot.png" alt="dsh-verify HTML report with per-step PASS/FAIL and screenshots"><figcaption>Self-contained HTML report — per-step results, screenshots, pass/fail badges.</figcaption></figure>
+</div>
+
+<hr class="rule"><div class="wrap">
+  <div class="ctablock">
+    <h2>Star the repo</h2>
+    <p>If Witness catches something for you — a star is how this project stays alive.</p>
+    <a class="btn" href="https://github.com/263311487-ux/dsh-verify/stargazers">⭐ Star dsh-verify on GitHub</a>
+    <a class="btn ghost" href="arena/">See the Agent Arena →</a>
+  </div>
+</div>
+
+<footer class="wrap">
+  <span>dsh-verify · Witness · MIT License</span>
+  <a href="https://github.com/263311487-ux/dsh-verify">GitHub</a>
+  <a href="https://www.npmjs.com/package/dsh-verify">npm</a>
+  <a href="https://glama.ai/mcp/servers/263311487-ux/dsh-verify">glama.ai</a>
+  <a href="arena/">Agent Arena</a>
+</footer>
+</body></html>
