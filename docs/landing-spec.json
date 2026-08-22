@@ -1,0 +1,13 @@
+{
+  "title": "dsh-verify landing page — daily self-acceptance (Witness verifies itself)",
+  "steps": [
+    { "action": "goto", "url": "https://263311487-ux.github.io/dsh-verify/" },
+    { "action": "expect_text", "selector": "h1", "text": "Agents say done" },
+    { "action": "expect_text", "selector": ".tagline", "text": "quality gate" },
+    { "action": "expect_text", "selector": "nav", "text": "GitHub" },
+    { "action": "click", "selector": "a.btn:first-of-type" },
+    { "action": "expect_network_errors", "present": false },
+    { "action": "expect_console_errors", "present": false },
+    { "action": "screenshot", "name": "landing" }
+  ]
+}

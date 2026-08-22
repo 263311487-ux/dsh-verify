@@ -1,0 +1,31 @@
+name: self-acceptance
+
+on:
+  schedule:
+    - cron: '0 1 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['docs/**', 'README.md', '.github/workflows/self-acceptance.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  verify-landing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify own landing page in a real browser (Witness verifies itself)
+        uses: ./.github/actions/dsh-verify
+        with:
+          spec: docs/landing-spec.json
+          out: self-acceptance-out
+
+      - name: Upload acceptance report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: self-acceptance-report
+          path: self-acceptance-out/

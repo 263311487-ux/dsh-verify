@@ -11,6 +11,7 @@
 [![MCP server](https://glama.ai/mcp/servers/263311487-ux/dsh-verify/badges/score.svg)](https://glama.ai/mcp/servers/263311487-ux/dsh-verify)
 [![awesome-dsh-plugin](https://img.shields.io/badge/awesome--dsh--plugin-listed-brightgreen)](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin)
 [![GitHub stars](https://img.shields.io/github/stars/263311487-ux/dsh-verify?style=social)](https://github.com/263311487-ux/dsh-verify/stargazers)
+[![self-acceptance](https://github.com/263311487-ux/dsh-verify/actions/workflows/self-acceptance.yml/badge.svg)](https://github.com/263311487-ux/dsh-verify/actions/workflows/self-acceptance.yml)
 
 *If Witness catches something for you, ⭐ [star the repo](https://github.com/263311487-ux/dsh-verify) — it's how this project stays alive.*
 
