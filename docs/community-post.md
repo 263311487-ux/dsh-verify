@@ -42,7 +42,15 @@ The check that would have caught our bug:
 { "action": "expect_style_changed", "selector": "#page", "prop": "backgroundColor", "var": "bg_before" }
 ```
 
+## Traction (real, verifiable)
+
+- **npm**: 2,938 downloads in the last week (pypi mirror another 114) — agents and CI pipelines are pulling it
+- **MCP directory**: listed on glama.ai at https://glama.ai/mcp/servers/263311487-ux/dsh-verify
+- **Agent Arena**: 48 real-browser runs, 44 passed — open leaderboard at https://263311487-ux.github.io/dsh-verify/arena/
+- **Landing page**: https://263311487-ux.github.io/dsh-verify/
+
 ## Live evidence (real Playwright output, committed in the repo)
+
 
 | Build | Agent self-review | Real browser verdict |
 |---|---|---|

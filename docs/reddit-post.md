@@ -1,37 +1,18 @@
-# Reddit r/LocalLLaMA post — ready to paste
+# Reddit 短帖 (r/SideProject + r/LocalLLaMA 可复用)
 
-**Title (choice 1):**
-Agents self-test and pass. Real browsers tell the truth.
-
-**Title (choice 2):**
-4 agents reviewed my demo as "no issues found" — the dark-mode toggle did literally nothing in a real browser. I turned that into an open-source tool.
-
----
+**r/SideProject title:**
+I built an open-source "witness" that clicks your AI's web app in a real browser — agents self-test and pass, the browser tells the truth
 
 **Body:**
 
-Story time: I ran a 4-agent web team (spec writer → frontend dev → QA agent → reviewer) inside DeepSeek Harness. The brief was a page with a counter and a dark-mode toggle. Team self-review: **"no issues found."**
+TL;DR: when an AI agent says "done" on a web app, its self-review is worthless — it checks the code it just wrote, not what a user experiences. I built [Witness](https://263311487-ux.github.io/dsh-verify/) (`dsh-verify`): write a JSON checklist of what a human would check, it drives real Chromium, returns PASS/FAIL with screenshot receipts. CLI, MCP server (Claude Code/Cursor/Copilot), GitHub Action.
 
-In a real browser, the toggle did nothing. The JS toggled a `.dark` class, but the CSS rule for `.dark` was never written. Every agent check passed because there was nothing to run — no one opened a browser.
+Why: our 4-agent web team self-reviewed "no issues found" — the dark-mode toggle did nothing because one CSS rule was never written. No one opened a browser.
 
-That gap is structural, not a skill issue: agent teams verify against a *shared belief* about the code, not against the *user's experience*. The only fix is an independent check that doesn't share the team's blind spots.
+Data so far (48 real-browser runs across 4 agent setups): 44/48 passed. The failures: 2 runs returned `"undefined" is not valid JSON`, 2 shipped a todo app missing its seeded todos. The self-check loop lifted the worst task from 6/8 to 8/8.
 
-So I built **Witness** (`dsh-verify` on npm/GitHub — MIT, ~zero deps, npm + GitHub Action + MCP server):
-
-- Write a JSON checklist of what a human would check: `goto → click → expect_text → capture_style → expect_style_changed`
-- It drives real headless Chromium and asserts **computed styles**, not DOM class lists (that's the check that catches "class toggled but CSS never written")
-- Returns an HTML report + exit code 0/1, drops into CI in one step
-- `dsh-verify gen --url <url> --run`: an LLM drafts the checklist, the deterministic browser enforces it — the AI never judges its own work
-- Visual regression: pixel-diff screenshot baselines with red-highlight diff images
-- MCP server so Claude Code / Cursor agents can verify deliverables themselves
-- The repo ships the buggy and fixed builds side by side as proof: buggy FAIL 10/11, fixed PASS 11/11, same page, one missing CSS rule
-
+Open leaderboard — bring your own agent: https://263311487-ux.github.io/dsh-verify/arena/
 Repo: https://github.com/263311487-ux/dsh-verify
-Try in 2 minutes: `npx dsh-verify demo:buggy` (fails) then `npx dsh-verify demo:fixed` (passes).
+npm (2.9k downloads/week): https://www.npmjs.com/package/dsh-verify
 
-Questions for the community:
-1. Do you run acceptance checks on agent-delivered web artifacts today? How?
-2. What's the next check that belongs in the box? (Roadmap: firefox/webkit matrix ✓ shipped, mobile viewports, natural-language spec generation)
-3. Hit the same "self-test green, browser red" wall? Tell the story — I want receipts in the README.
-
-*(Posted with permission; this is my own project.)*
+Happy to hear what check you'd want next.
