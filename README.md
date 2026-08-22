@@ -1,5 +1,7 @@
 # dsh-verify
 
+[中文](README.zh.md) | English
+
 > **Witness** — The browser is the judge.
 > The quality gate for agent-built web apps. Agents say done; the browser proves it.
 > *(Witness is the product name; `dsh-verify` is the package name — same thing.)*
