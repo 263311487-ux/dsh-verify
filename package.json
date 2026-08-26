@@ -1,6 +1,6 @@
 {
   "name": "dsh-verify",
-  "version": "0.9.1",
+  "version": "0.9.3",
   "description": "Witness — the quality gate for agent-built web apps. Independent browser acceptance testing: CLI, MCP, AI-drafted checklists, visual regression, multi-browser. Agents self-test and pass; real browsers tell the truth.",
   "keywords": [
     "deepseek",
@@ -14,7 +14,9 @@
     "browser-automation",
     "playwright",
     "visual-regression",
-    "verification"
+    "verification",
+    "dsh",
+    "cordis"
   ],
   "type": "module",
   "bin": {
@@ -24,7 +26,8 @@
   "files": [
     "bin/",
     "cordis.patch.yml",
-    "mcp/"
+    "mcp/",
+    "dsh/"
   ],
   "engines": {
     "node": ">=18"
@@ -56,5 +59,10 @@
   "bugs": {
     "url": "https://github.com/263311487-ux/dsh-verify/issues"
   },
-  "mcpName": "io.github.263311487-ux/dsh-verify"
+  "mcpName": "io.github.263311487-ux/dsh-verify",
+  "main": "dsh/plugin.mjs",
+  "exports": {
+    ".": "./dsh/plugin.mjs",
+    "./package.json": "./package.json"
+  }
 }
