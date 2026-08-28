@@ -197,6 +197,7 @@ Add a spec, wire the GitHub Action, and the badge is earned, not claimed. See [d
 ## Related
 
 - [dsh-doublecheck](https://github.com/PerryLink/dsh-doublecheck) — delivery quality gate for DeepSeek Harness (/gate): requirements grill + evidence discipline. Complementary pair: /gate keeps the evidence honest, dsh-verify keeps the browser honest.
+- [falsify](https://github.com/263311487-ux/falsify) — the scientific thinking protocol for AI agents (hypothesis → falsify → evidence → calibrated conclusion). The pair: falsify catches the wrong conclusion, dsh-verify catches the broken output.
 - Featured in the DeepSeek Harness community — [Show Your Plugins: dsh-verify](https://github.com/deepseek-ai/deepseek-harness/discussions/2806) (48-run Agent Arena results in-thread)
 
 ## License
