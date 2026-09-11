@@ -5,9 +5,9 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 export const name = 'dsh-verify';
+export const inject = ['tools'];
 
 export function apply(ctx) {
-  if (!ctx.tools) return;
   import('@deepseek-ai/dsh-tools')
     .then(({ defineTool }) => {
       ctx.tools.register(defineTool({
