@@ -60,7 +60,7 @@ a { color:#58a6ff; text-decoration:none; } a:hover { text-decoration:underline; 
 <hr class="rule">
 <div class="headline">
 <div class="bignum">44/48</div>
-<p>runs passed the real-browser acceptance checks — 4 records per setup/task cell; historical runs August 17-18, 2026 UTC; page generated 2026-10-08 14:39 UTC.</p>
+<p>runs passed the real-browser acceptance checks — 4 records per setup/task cell; historical runs August 17-18, 2026 UTC; page generated 2026-10-08 14:54 UTC.</p>
 </div>
 <div class="enter"><b>Bring your own agent.</b> Run your model on the same 3 tasks with the same human checks, then submit the results for maintainer review before inclusion. <a href="https://github.com/263311487-ux/dsh-verify/blob/main/docs/ARENA.md">How to enter →</a></div>
 <table>
@@ -71,17 +71,17 @@ a { color:#58a6ff; text-decoration:none; } a:hover { text-decoration:underline; 
 
 <h2>Where agents actually failed</h2>
 <p class="meta">Committed summaries report 2 FAIL and 2 ERROR. Generated apps, model replies, and local report files are not committed; exact historical reproduction is unavailable. ERROR is a runner failure, not a browser verdict.</p>
-<div class="cards"><div class="card"><div class="card-top"><span class="badge err">ERROR</span><span class="card-title">DeepSeek v4-flash · self-check loop · Pricing calculator</span></div><p class="card-body">The agent's own verification report was corrupt JSON (<code>"undefined" is not valid JSON</code>) — its self-check crashed before the browser could grade the page.<span class="dim"> <b>0/0</b> checks passed</span></p></div>
+<div class="cards"><div class="card"><div class="card-top"><span class="badge err">ERROR</span><span class="card-title">DeepSeek v4-flash · self-check loop · Pricing calculator</span></div><p class="card-body">The runner could not parse the verification result (<code>"undefined" is not valid JSON</code>) — the record contains no usable browser verdict.<span class="dim"> <b>0/0</b> checks passed</span></p></div>
 <div class="card"><div class="card-top"><span class="badge fail">FAIL</span><span class="card-title">DeepSeek v4-flash · single shot · Todo app</span></div><p class="card-body">The browser reported <code>expect_text #remaining: got "0 remaining"</code> — the app opened but required seed todos never appeared in the page — the browser saw an empty list.<span class="dim"> <b>9/19</b> checks passed</span></p></div>
-<div class="card"><div class="card-top"><span class="badge err">ERROR</span><span class="card-title">DeepSeek v4-pro · single shot · Pricing calculator</span></div><p class="card-body">The agent's own verification report was corrupt JSON (<code>"undefined" is not valid JSON</code>) — its self-check crashed before the browser could grade the page.<span class="dim"> <b>0/0</b> checks passed</span></p></div>
+<div class="card"><div class="card-top"><span class="badge err">ERROR</span><span class="card-title">DeepSeek v4-pro · single shot · Pricing calculator</span></div><p class="card-body">The runner could not parse the verification result (<code>"undefined" is not valid JSON</code>) — the record contains no usable browser verdict.<span class="dim"> <b>0/0</b> checks passed</span></p></div>
 <div class="card"><div class="card-top"><span class="badge fail">FAIL</span><span class="card-title">DeepSeek v4-pro · single shot · Todo app</span></div><p class="card-body">The browser reported <code>expect_text #remaining: got "3 remaining"</code> — the app opened but required seed todos never appeared in the page — the browser saw an empty list.<span class="dim"> <b>11/19</b> checks passed</span></p></div></div>
 
-<h2>More expensive ≠ more reliable</h2>
+<h2>What this sample can tell us</h2>
 <div class="comparison">Historical sample only: two model labels, two strategies, three static tasks, four records per cell. Self-check permits additional repair rounds; these results do not establish general reliability or cost efficiency.</div>
 
 <h2>Methodology</h2>
 <ul class="method">
-<li>Every setup gets the <b>same task prompt</b>, the same spec of human checks, the same temperature (0.7), and the same budget (≤ 2 self-check fix rounds).</li>
+<li>Every setup gets the <b>same task prompt</b>, the same spec of human checks, the same temperature (0.7), with up to two additional repair rounds for self-check; compute budgets differ.</li>
 <li>Grading is <b>deterministic</b>: a real headless Chromium clicks, types, reads computed styles and localStorage. No LLM grades the outcome.</li>
 <li>Each cell is run <b>4×</b> because LLM output is nondeterministic — a single run can flip.</li>
 <li>Tasks and specs live in <code>arena/tasks/</code>; raw per-run results in <code>arena/results/</code>.</li>

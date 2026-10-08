@@ -69,7 +69,7 @@ const evidenceCards = records
     const badge = isError ? `<span class="badge err">ERROR</span>` : `<span class="badge fail">FAIL</span>`;
     const title = `${MODEL_DISPLAY[r.model] || r.model} · ${STRAT_DISPLAY[r.strategy] || r.strategy} · ${TASK_NAMES[r.task] || r.task}`;
     const browser = isError
-      ? `The agent's own verification report was corrupt JSON (<code>${shortFail(r)}</code>) — its self-check crashed before the browser could grade the page.`
+      ? `The runner could not parse the verification result (<code>${shortFail(r)}</code>) — the record contains no usable browser verdict.`
       : `The browser reported <code>${shortFail(r)}</code> — ${TASK_WHY[r.task] || ""}`;
     const score = r.final.passed != null ? ` <b>${r.final.passed}/${r.final.total}</b> checks passed` : "";
     return `<div class="card"><div class="card-top">${badge}<span class="card-title">${title}</span></div><p class="card-body">${browser}<span class="dim">${score}</span></p></div>`;
@@ -172,12 +172,12 @@ a { color:#58a6ff; text-decoration:none; } a:hover { text-decoration:underline; 
 <p class="meta">Committed summaries report 2 FAIL and 2 ERROR. Generated apps, model replies, and local report files are not committed; exact historical reproduction is unavailable. ERROR is a runner failure, not a browser verdict.</p>
 <div class="cards">${evidenceCards}</div>
 
-<h2>More expensive ≠ more reliable</h2>
+<h2>What this sample can tell us</h2>
 <div class="comparison">${priceLine}</div>
 
 <h2>Methodology</h2>
 <ul class="method">
-<li>Every setup gets the <b>same task prompt</b>, the same spec of human checks, the same temperature (0.7), and the same budget (≤ 2 self-check fix rounds).</li>
+<li>Every setup gets the <b>same task prompt</b>, the same spec of human checks, the same temperature (0.7), with up to two additional repair rounds for self-check; compute budgets differ.</li>
 <li>Grading is <b>deterministic</b>: a real headless Chromium clicks, types, reads computed styles and localStorage. No LLM grades the outcome.</li>
 <li>Each cell is run <b>${runsPerCell}×</b> because LLM output is nondeterministic — a single run can flip.</li>
 <li>Tasks and specs live in <code>arena/tasks/</code>; raw per-run results in <code>arena/results/</code>.</li>
