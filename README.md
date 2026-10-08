@@ -19,6 +19,27 @@
 
 `dsh-verify` opens a real browser and checks — so you never have to take the agent's word for it.
 
+## First success — no API key
+
+Requires Node.js 18+ and a one-time Chromium download. From an empty working directory:
+
+```bash
+npm install --save-dev dsh-verify@0.9.5
+npx dsh-verify init
+cd dsh-verify-starter
+npx playwright install chromium
+npx dsh-verify --spec dsh-verify.spec.json
+# PASS (5/5), exit 0 -> dsh-verify-out/report.html
+npx dsh-verify --spec dsh-verify.fail.json --out failed-report
+# Intentional FAIL (4/5), exit 1 -> failed-report/report.html
+```
+
+Open either HTML report with its adjacent PNG file. The failing spec deliberately expects wrong text; inspect the assertion and screenshot. [Existing missing-CSS failure report](evidence/buggy-report.html) is another inspectable example.
+
+`init [directory]` only writes a local fixture and two JSON specs. It never calls an LLM, launches a browser, or downloads anything. The destination must be new (its parent must exist); existing directories, files, and symlinks are refused without changes. No force/overwrite option. Package and browser installation require internet; these starter checks use localhost only. `gen` and MCP `generate_and_verify` are optional, separate features that require an LLM key.
+
+To check your own app, edit the JSON steps; keep `serve` for static files or use `base` for an existing URL. `serve` paths resolve from the command's current directory, not the spec file. A PASS applies only to the supplied checks in that run; it does not establish complete coverage, security, accessibility, or independent authorship. The app and spec may come from the same agent; review the spec separately when independence matters. Reports retain assertion details and explicitly requested screenshots, not a complete audit trail.
+
 ![dsh-verify — Agents say done. The browser proves it.](assets/social-card.png)
 
 ![dsh-verify in action](assets/hero.gif)
@@ -41,7 +62,7 @@ We ran a 4-agent web team (spec writer → frontend dev → QA → reviewer). Th
 
 In a real browser, the dark-mode toggle **did nothing** — the `.dark` class was toggled, but the CSS rule was never written. Every agent self-test passed because there was nothing in the page for the agents to run. **No one opened a real browser.**
 
-That's the gap: *agents verify against what they believe they built, not against what a user actually experiences.* Unit tests and static checks can't catch a missing CSS rule.
+That's the gap: *agents verify against what they believe they built, not against what a user actually experiences.* These checks did not exercise the rendered CSS behavior; a browser assertion can cover it.
 
 | Build | What the agents said | What a real browser says |
 |---|---|---|
@@ -50,23 +71,19 @@ That's the gap: *agents verify against what they believe they built, not against
 
 Same page. Same JS. One missing CSS rule. Two different verdicts.
 
-## Why not just ...?
+## How it fits with other tools
 
-| What you might reach for | Its blind spot | What dsh-verify adds |
-|---|---|---|
-| **Hand-rolled Playwright scripts** | Every agent project re-writes the same boilerplate; nothing is reviewable as a spec | A JSON spec is the whole contract — write once, reuse across agents and CI |
-| **LLM judges (promptfoo-style evals)** | An LLM says "looks right" — it doesn't run the app or see the pixels | A real browser executes clicks, inputs, styles, and returns screenshot receipts |
-| **Agent built-in browser tools** | They're the agent's *hands* — they share the same blind spots as the code they just wrote | dsh-verify is an independent witness, not part of the agent being tested |
-| **Screenshot-only visual tools** | They catch pixel drift, not "button does nothing" | Behavior checks: click, expect text/class/style change, console errors, network errors |
-
-The agent graded its own homework. dsh-verify re-grades it in a real browser.
+- Playwright scripts provide a general browser API. This package exposes common checks as a reviewable JSON spec and report; custom scripts remain useful for flows outside this schema.
+- LLM evaluation tools can assess open-ended outputs and may also integrate browsers. This package evaluates explicit browser assertions without an LLM deciding their result.
+- Agent browser tools let agents operate a page. Stored specs make repeat runs inspectable; independent review still depends on who writes and reviews the spec.
+- Visual regression tools detect pixel changes. This package combines screenshot comparisons with behavior assertions; coverage depends on the chosen checks.
 
 ## Use it three ways
 
 | Entry point | What it's for | One-liner |
 |---|---|---|
 | **MCP server** | Your AI agent verifies its own deliverable, mid-session | `claude mcp add dsh-verify -- npx -y -p dsh-verify dsh-verify-mcp` |
-| **CLI** | You or your CI verify a build/URL | `npx dsh-verify --spec demo/fixed.json` |
+| **CLI** | You or your CI verify a build/URL | `npx dsh-verify init` |
 | **GitHub Action** | Every push runs real-browser checks | `uses: 263311487-ux/dsh-verify/.github/actions/dsh-verify@main` |
 
 ### From any AI agent (MCP)
@@ -107,7 +124,7 @@ npx dsh-verify --spec 'specs/*.json'
 ## What's in the box
 
 - **Deterministic judge** — a real headless Chromium (or Firefox / WebKit) executes human-style checks: click, fill, text, classes, **computed styles**, URLs, console errors, network errors, pixels.
-- **Receipts, not vibes** — every run emits a self-contained HTML report with screenshots and red-highlighted diff images; `--json` for machines; exit `0`/`1` for CI.
+- **Receipts, not vibes** — every run emits a HTML report with adjacent image files with screenshots and red-highlighted diff images; `--json` for machines; exit `0`/`1` for CI.
 - **Visual regression** — screenshot baselines, pixel-diff with thresholds (`expect_screenshot`), refresh with `--update-baselines`.
 - **AI-drafted checklists** — `dsh-verify gen --url ... --prompt "..."` learns the page in a real browser, has an LLM draft the checklist, then executes it deterministically. The AI drafts; it never judges.
 - **Multi-browser** — `chromium` | `firefox` | `webkit` per spec or `--browser`.
@@ -137,7 +154,7 @@ Top-level fields: `title`, `serve` (static dir) or `base` (target URL), `browser
 
 ## The report
 
-A self-contained HTML report — every step with a pass/fail badge, selector, and detail, plus screenshots:
+A HTML report with adjacent image files — every step with a pass/fail badge, selector, and detail, plus screenshots:
 
 ![dsh-verify report](assets/report-screenshot.png)
 
@@ -153,7 +170,7 @@ export LLM_API_KEY=sk-...          # any OpenAI-compatible model
 node arena/run.mjs --agent "gpt-5/single" --task all --repeat 1 --submitter yourname
 ```
 
-Your setup appears on the live leaderboard next to DeepSeek v4-flash / v4-pro:
+Submit the result files for maintainer review before they appear on the leaderboard:
 [agent-arena](https://263311487-ux.github.io/dsh-verify/arena/).
 Full rules in [docs/ARENA.md](docs/ARENA.md).
 
@@ -171,8 +188,9 @@ The repo's own CI runs exactly that — engine self-tests, then asserts fixed **
 
 ## Agent Arena — can agents ship working web apps?
 
-Same task, same prompt, same human checks — different agents, graded by dsh-verify in a real browser. Latest run (2026-08-19): **44/48 runs passed** across 2 models × 2 strategies × 3 tasks, 4 runs per cell. Two counterintuitive findings: the pricier **v4-pro single-shot scored below the cheaper v4-flash single-shot** (10/12 vs 11/12), and a real-browser self-check loop lifted v4-pro to **12/12** — while v4-flash's self-check crashed once when its own verification report came back as corrupt JSON. Every failure is reproducible and invisible to an LLM judge.
+Historical snapshot, not a current model ranking. The committed records span **2026-08-17–18 UTC**: **48 runs, 44 PASS, 2 FAIL, 2 ERROR**, across two recorded model labels × two strategies × three static tasks (four records per cell). Self-check allows up to two repair rounds, so compute budgets differ. Model labels are recorded identifiers, not independently verified identities.
 
+Records do not pin historical verifier/dependency versions. Generated apps, model replies, and local report files are not committed, limiting exact reproduction. No new LLM runs were made for the 0.9.5 documentation refresh. See [methodology and limitations](docs/ARENA.md).
 [![Agent Arena](https://img.shields.io/badge/Agent%20Arena-live-3fb950)](https://263311487-ux.github.io/dsh-verify/arena/)
 
 See [docs/ARENA.md](docs/ARENA.md) — methodology, the tasks, and how to run your own agent.
@@ -190,7 +208,7 @@ Add a spec, wire the GitHub Action, and the badge is earned, not claimed. See [d
 ## Roadmap
 
 - [x] MCP server · AI-drafted checklists · visual regression · multi-browser · GitHub Action · dsh plugin
-- [ ] **Agent arena** — a public benchmark: give the same task to different agent setups, grade them in real browsers, publish the leaderboard
+- [x] **Agent arena** — a public benchmark: give the same task to different agent setups, grade them in real browsers, publish the leaderboard
 - [ ] Spec recorder (browser extension: click through once → spec generated)
 - [ ] Cloud runs + shareable report links + PR comments
 

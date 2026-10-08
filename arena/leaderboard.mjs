@@ -88,7 +88,7 @@ const flashSingle = agg("deepseek-v4-flash", "single");
 const proSingle = agg("deepseek-v4-pro", "single");
 const proSelf = agg("deepseek-v4-pro", "selfcheck");
 const flashSelf = agg("deepseek-v4-flash", "selfcheck");
-const priceLine = `DeepSeek v4-pro single-shot scored <b>${proSingle}</b> — below the cheaper v4-flash single-shot (<b>${flashSingle}</b>). Adding a real-browser self-check loop lifted v4-pro to <b>${proSelf}</b> (and v4-flash to <b>${flashSelf}</b>). Paying more does not buy reliability; checking against the real browser does.`;
+const priceLine = 'Historical sample only: two model labels, two strategies, three static tasks, four records per cell. Self-check permits additional repair rounds; these results do not establish general reliability or cost efficiency.';
 
 // Headline: the flash todo story
 const ft = cells["deepseek-v4-flash/single/todo"];
@@ -100,7 +100,7 @@ const flashTodoLine = ft && fts
 const html = `<!doctype html><html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Agent Arena — can agents ship working web apps?</title>
-<meta name="description" content="48 real-browser runs across 12 agent setups. No LLM judges — a real browser clicks, types and grades. See where agents actually failed.">
+<meta name="description" content="48 historical records across 4 agent setups and 3 tasks. No LLM judges — a real browser clicks, types and grades. See where agents actually failed.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Agent Arena — can AI agents ship working web apps?">
 <meta property="og:description" content="${totalPass}/${total} runs passed real-browser acceptance checks. Open entry — bring your own agent and appear on the board. The browser is the judge.">
@@ -159,9 +159,9 @@ a { color:#58a6ff; text-decoration:none; } a:hover { text-decoration:underline; 
 <hr class="rule">
 <div class="headline">
 <div class="bignum">${totalPass}/${total}</div>
-<p>runs passed the real-browser acceptance checks — ${runsPerCell} runs per setup, generated ${generatedAt}.</p>
+<p>runs passed the real-browser acceptance checks — ${runsPerCell} records per setup/task cell; historical runs August 17-18, 2026 UTC; page generated ${generatedAt}.</p>
 </div>
-<div class="enter"><b>Bring your own agent.</b> Run your model on the same 3 tasks with the same human checks, and your setup appears on this board. <a href="https://github.com/263311487-ux/dsh-verify/blob/main/docs/ARENA.md">How to enter →</a></div>
+<div class="enter"><b>Bring your own agent.</b> Run your model on the same 3 tasks with the same human checks, then submit the results for maintainer review before inclusion. <a href="https://github.com/263311487-ux/dsh-verify/blob/main/docs/ARENA.md">How to enter →</a></div>
 <table>
 <thead><tr><th>Agent setup</th><th>${TASK_NAMES.todo}</th><th>${TASK_NAMES.pricing}</th><th>${TASK_NAMES.form}</th><th>Pass</th><th>Submitted by</th></tr></thead>
 <tbody>${rows}</tbody>
@@ -169,7 +169,7 @@ a { color:#58a6ff; text-decoration:none; } a:hover { text-decoration:underline; 
 <div class="hl">${flashTodoLine} Agents self-report success; real browsers tell the truth.</div>
 
 <h2>Where agents actually failed</h2>
-<p class="meta">Every failure below is real, reproducible, and invisible to an LLM judge — the agent's own report said the page was fine.</p>
+<p class="meta">Committed summaries report 2 FAIL and 2 ERROR. Generated apps, model replies, and local report files are not committed; exact historical reproduction is unavailable. ERROR is a runner failure, not a browser verdict.</p>
 <div class="cards">${evidenceCards}</div>
 
 <h2>More expensive ≠ more reliable</h2>
@@ -188,6 +188,7 @@ node arena/run.mjs --agent &lt;your-model&gt;/single --task all --repeat 3
 node arena/run.mjs --agent &lt;your-model&gt;/selfcheck --task all --repeat 3
 node arena/leaderboard.mjs   # regenerate this page</pre>
 <p class="meta">Bring your own model, harness, or framework — the checks are the same for everyone. Add a row, open a PR, join the leaderboard.</p>
+<p class="meta">Documentation revision: 2026-10-08, accompanying dsh-verify 0.9.5. Historical verifier, browser and provider versions were not recorded; these are not 0.9.5 benchmark runs. Model labels are unverified identifiers. Small static tasks and unequal repair budgets limit comparisons. <a href="https://github.com/263311487-ux/dsh-verify/blob/main/docs/ARENA.md">Evidence and limitations</a></p>
 <div class="footer">Built with <a href="https://github.com/263311487-ux/dsh-verify">dsh-verify</a> · MIT · <a href="https://github.com/263311487-ux/dsh-verify/tree/main/arena">source</a> · <a href="${BASE_URL}/">home</a></div>
 </div></body></html>`;
 

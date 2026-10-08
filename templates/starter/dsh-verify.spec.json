@@ -1,0 +1,28 @@
+{
+  "title": "First browser check / 首次浏览器验收",
+  "serve": "site",
+  "steps": [
+    {
+      "action": "goto",
+      "path": "/index.html"
+    },
+    {
+      "action": "click",
+      "selector": "#hello"
+    },
+    {
+      "action": "expect_text",
+      "selector": "#message",
+      "text": "Hello from a real browser",
+      "exact": true
+    },
+    {
+      "action": "expect_console_errors",
+      "present": false
+    },
+    {
+      "action": "screenshot",
+      "name": "final-state"
+    }
+  ]
+}

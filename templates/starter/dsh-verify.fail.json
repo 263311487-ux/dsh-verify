@@ -1,0 +1,28 @@
+{
+  "title": "Intentional failure / 故意失败示例",
+  "serve": "site",
+  "steps": [
+    {
+      "action": "goto",
+      "path": "/index.html"
+    },
+    {
+      "action": "click",
+      "selector": "#hello"
+    },
+    {
+      "action": "expect_text",
+      "selector": "#message",
+      "text": "This text is deliberately wrong",
+      "exact": true
+    },
+    {
+      "action": "expect_console_errors",
+      "present": false
+    },
+    {
+      "action": "screenshot",
+      "name": "final-state"
+    }
+  ]
+}

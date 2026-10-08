@@ -6,12 +6,12 @@
     "url": "https://github.com/263311487-ux/dsh-verify",
     "source": "github"
   },
-  "version": "0.9.1",
+  "version": "0.9.5",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "dsh-verify",
-      "version": "0.9.1",
+      "version": "0.9.5",
       "transport": {
         "type": "stdio"
       }

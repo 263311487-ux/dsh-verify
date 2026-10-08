@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>dsh-verify starter</title>
+  <style>body{font:20px/1.6 system-ui,sans-serif;max-width:42rem;margin:10vh auto;padding:24px;color:#18212f;background:#f8fafc}button{font:inherit;padding:12px 20px;cursor:pointer}#message{min-height:2em}</style>
+</head>
+<body>
+  <h1>Your first browser check / 首次浏览器验收</h1>
+  <p>This local page needs no API key or external resources.</p>
+  <button id="hello" type="button">Say hello / 打个招呼</button>
+  <p id="message" role="status"></p>
+  <script>
+    document.querySelector('#hello').addEventListener('click', () => {
+      document.querySelector('#message').textContent = 'Hello from a real browser';
+    });
+  </script>
+</body>
+</html>

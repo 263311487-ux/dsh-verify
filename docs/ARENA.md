@@ -4,22 +4,20 @@
 
 Live leaderboard: <https://263311487-ux.github.io/dsh-verify/arena/>
 
-## The seed result (2026-08-17)
+## Snapshot provenance and limits (documentation revision: 2026-10-08)
 
-| Agent setup | Todo app | Pricing calc | Signup form | Pass |
-|---|---|---|---|---|
-| DeepSeek v4-flash · single shot | ❌ 9/19 | ✅ 22/22 | ✅ 18/18 | 2/3 |
-| DeepSeek v4-flash · self-check loop | ✅ 19/19 | ✅ 22/22 | ✅ 18/18 | 3/3 |
-| DeepSeek v4-pro · single shot | ✅ 19/19 | ✅ 22/22 | ✅ 18/18 | 3/3 |
-| DeepSeek v4-pro · self-check loop | ✅ 19/19 | ✅ 22/22 | ✅ 18/18 | 3/3 |
+- Dataset: the 48 committed JSON records in arena/results, mirrored in docs/arena/data.json. Their timestamps span 2026-08-17–18 UTC, not August 19.
+- Sample: two recorded model labels × two strategies × three static tasks × four records per cell. Totals: 44 PASS, 2 FAIL, 2 ERROR. ERROR includes runner failures and is not a browser verdict.
+- Version: this documentation accompanies dsh-verify 0.9.5. The historical records do not capture verifier, dependency, browser, or exact provider model versions. Do not label these as 0.9.5 benchmark results.
+- Evidence: committed JSON contains summaries and local report paths. Generated apps, model replies, and report files stayed in ignored arena/work; those absolute paths are not public evidence links. The repository alone cannot reproduce the original failures exactly.
+- Interpretation: self-check allows up to two extra repair rounds, so budgets differ. This tiny task-specific sample does not establish general model reliability, price efficiency, statistical significance, or superiority over another evaluation tool. Model labels were not independently authenticated.
+- Independence: browser assertions are evaluated without an LLM judge, but spec authorship, task design, and result curation are not independent audits. An omitted requirement cannot fail.
+- Refresh: no model/API experiments were run for this documentation update. New runs require API access and may incur charges.
 
-The one failure is the interesting one: DeepSeek v4-flash single-shot built a todo app that **started with zero seeded todos** — the task said "seed exactly three todos" and the agent skipped it. 9 of 19 real-browser checks failed. The same model with a **self-check loop** (it sees the real-browser failures and fixes, up to two rounds) passed 19/19.
-
-Observations, honestly stated:
-
-- **LLM output is nondeterministic.** We ran flash/single on the todo task twice: once it passed 19/19, once it failed 9/19. A single run can flip. That's why re-running matters, and why a deterministic check is more valuable than a model's self-report.
-- **Self-check helped in exactly the case that mattered** (the failed task), and never hurt.
-- This is a **seed batch**: one run per cell. The framework is designed to be re-run — with your model, your harness, your budget.
+| Recorded model label | Single shot | Self-check |
+|---|---|---|
+| deepseek-v4-flash | 11/12 PASS | 11/12 PASS |
+| deepseek-v4-pro | 10/12 PASS | 12/12 PASS |
 
 ## The tasks
 
@@ -47,7 +45,7 @@ Two strategies:
 ## Enter the Arena (bring your own agent)
 
 The board is **open entry**: run your model on the same 3 tasks with the same
-human checks, and your setup appears on the leaderboard with your GitHub name.
+human checks, then submit the results for maintainer review before inclusion on the board.
 
 ```bash
 git clone https://github.com/263311487-ux/dsh-verify && cd dsh-verify
@@ -88,7 +86,7 @@ node arena/run.mjs --agent deepseek-v4-pro/selfcheck --task all
 node arena/leaderboard.mjs   # regenerate the page
 ```
 
-Raw evidence is reproducible: each attempt's `index.html` and the model reply
+For new runs, each attempt's `index.html` and the model reply
 are kept locally in `arena/work/` (not committed).
 
 ## Why this exists

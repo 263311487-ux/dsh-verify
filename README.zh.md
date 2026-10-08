@@ -16,6 +16,27 @@
 
 ---
 
+## 首次成功：无需 API key
+
+需要 Node.js 18+，首次需下载 Chromium。在一个空工作目录执行：
+
+```bash
+npm install --save-dev dsh-verify@0.9.5
+npx dsh-verify init
+cd dsh-verify-starter
+npx playwright install chromium
+npx dsh-verify --spec dsh-verify.spec.json
+# PASS (5/5)，退出码 0 -> dsh-verify-out/report.html
+npx dsh-verify --spec dsh-verify.fail.json --out failed-report
+# 故意失败：FAIL (4/5)，退出码 1 -> failed-report/report.html
+```
+
+打开 HTML 报告时保留同级 PNG 图片。失败清单故意断言错误文字，可直接检查断言与截图；另有[缺失 CSS 的失败报告](evidence/buggy-report.html)。
+
+`init [目录]` 只在新目录内写入本地网页和两份 JSON 清单，不调用模型、不启动浏览器、不下载资源。父目录必须存在；目标路径如已存在（包括空目录、文件、符号链接）会拒绝，不提供强制覆盖选项。首次安装包和浏览器需要联网，两份示例仅访问本机。`gen` 与 MCP `generate_and_verify` 是另行启用、需要模型 key 的功能。
+
+验收自己的应用时编辑步骤；静态文件用 `serve`，已有网址用 `base`。`serve` 相对于执行命令的当前目录，不是清单所在目录。PASS 仅表示本次浏览器运行中所写断言通过，不证明需求全覆盖、安全、无障碍或规范作者独立。网页与规范可能出自同一 agent，需要独立性时应另行审核规范。报告保存断言细节与明确请求的截图，不是完整审计轨迹。
+
 ## 为什么需要它
 
 我们跑了一个 4-agent 网页开发团队（需求 → 前端 → QA → 评审）。团队的自我评审结果是：
@@ -33,7 +54,7 @@
 
 同一页面、同一段 JS，只差一条 CSS 规则，两种完全不同的结论。
 
-**单元测试和静态检查抓不到"少了一条 CSS 规则"这种问题。** agent 是在验证"自己以为做出来的东西"，不是在验证"用户真正体验到的页面"。
+这次已有检查没有覆盖渲染后的样式行为；浏览器断言补上了这项覆盖。
 
 ## 怎么用（三种方式）
 
@@ -44,17 +65,7 @@
 npx dsh-verify --spec spec.json
 ```
 
-检查清单长这样（都是"人会在浏览器里检查什么"）：
-
-```json
-[
-  { "action": "goto", "url": "http://localhost:3000" },
-  { "action": "click", "selector": "#color-btn" },
-  { "action": "expect_style_changed", "selector": "#page", "prop": "backgroundColor" }
-]
-```
-
-跑完输出 `PASS (6/6)` 或 `FAIL (4/6)`，并生成一份带截图的 HTML 报告。
+初始化后打开生成的 JSON 即可看到完整格式：顶层对象包含 serve 与 steps。样式变化断言需先用 capture_style 保存同名变量。
 
 ### ② MCP 服务（给 Claude Code / Cursor / Copilot 用）
 
@@ -71,23 +82,20 @@ npx dsh-verify --spec spec.json
 一个步骤跑完验收，带报告产物：
 
 ```yaml
-- uses: 263311487-ux/dsh-verify@v0.9.0
+- uses: 263311487-ux/dsh-verify/.github/actions/dsh-verify@main
   with:
     spec: demo/fixed.json
     out: dsh-verify-out
 ```
 
-## 实测数据（48 次真实浏览器运行）
+## Arena 历史样本与限制
 
-| 模型 | 单次生成 | 自检循环 |
-|---|---|---|
-| DeepSeek V4 Flash | 11/12 通过 | 11/12 通过 |
-| DeepSeek V4 Pro | 10/12 通过 | 12/12 通过 |
+仓库记录时间为 **2026-08-17–18 UTC**：共 **48 条记录，44 PASS、2 FAIL、2 ERROR**；两个记录中的模型标签 × 两种策略 × 三个静态任务，每格四条。自检策略最多额外修复两轮，计算预算不同，不能据此推断普遍可靠性、性价比或当前模型排名。
 
-**最有说服力的一个结果**：最不稳的"待办清单"任务，加上自检循环后从 **6/8 提到 8/8**——差的不是智力，是验证。
+模型标签未经独立身份核验；历史记录未锁定验收器及依赖版本，生成网页、模型回复与本机报告未提交，无法仅凭仓库精确复现旧失败。0.9.5 文档整理没有重跑付费模型实验。
 
-- 完整排行榜（开放提交，带上你的 agent 上榜）：[Agent Arena](https://263311487-ux.github.io/dsh-verify/arena/)
-- 演示站：[https://263311487-ux.github.io/dsh-verify/](https://263311487-ux.github.io/dsh-verify/)
+- [Arena 历史看板](https://263311487-ux.github.io/dsh-verify/arena/)
+- [方法、版本与证据限制](docs/ARENA.md)
 
 ## 特性一览
 
@@ -115,11 +123,8 @@ npm run demo:fixed   # PASS
 **Q：和手写 Playwright 脚本有什么区别？**
 A：JSON 规范本身就是"需求文档"，一次编写，agent 和 CI 都能复用；而且不用每个项目重写一遍样板代码。
 
-**Q：和 LLM 裁判（promptfoo 之类的评测）有什么区别？**
-A：LLM 说"看起来没问题"，它没有运行你的应用、没有看到像素。真实浏览器会执行点击、输入、样式断言，并返回截图证据。
-
-**Q：agent 自己也有浏览器工具，为什么还要它？**
-A：agent 的浏览器工具是 agent 自己的"手"——和它刚写出来的代码共享同一个盲区。dsh-verify 是独立的见证者，不属于被测试的 agent。
+**Q：与 LLM 评测、agent 浏览器工具有什么区别？**
+A：其他工具也能集成浏览器；这里提供可保存、可重复执行的断言和报告。浏览器执行本身不保证规范独立或覆盖完整，AI 起草规范仍需审核。
 
 ## 生态收录
 

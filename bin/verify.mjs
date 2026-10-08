@@ -14,6 +14,7 @@ const HELP = `dsh-verify — independent browser acceptance testing for agent de
 Agents self-test and pass. Real browsers tell the truth.
 
 usage: dsh-verify --spec <spec.json|glob> [options]
+       dsh-verify init [directory]   create a zero-key starter (new directory only)
 
 options:
   --spec <file>   JSON acceptance spec; supports globs like "specs/*.json" (required)
@@ -311,6 +312,10 @@ function printFailed(f) {
 }
 
 async function main() {
+  if (process.argv[2] === 'init') {
+    const { main: initMain } = await import('./init.mjs');
+    return initMain(process.argv.slice(3));
+  }
   if (process.argv[2] === 'gen') {
     const { main: genMain } = await import('./gen.mjs');
     return genMain();
