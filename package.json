@@ -31,10 +31,12 @@
     "templates/",
     "demo/",
     "README.md",
-    "README.zh.md"
+    "README.zh.md",
+    "CHANGELOG.md",
+    "scripts/"
   ],
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "repository": {
     "type": "git",
@@ -44,9 +46,9 @@
     "test": "node --test",
     "demo:buggy": "node bin/verify.mjs --spec demo/buggy.json --out /tmp/dshv-buggy",
     "demo:fixed": "node bin/verify.mjs --spec demo/fixed.json --out /tmp/dshv-fixed",
-    "ci": "npm test && node bin/verify.mjs --spec demo/fixed.json --out /tmp/dshv-ci-fixed && ! node bin/verify.mjs --spec demo/buggy.json --out /tmp/dshv-ci-buggy",
-    "prepublishOnly": "npm run smoke",
-    "smoke": "node --test --test-name-pattern 'unknown browser' tests/browsers.test.mjs && node bin/verify.mjs --spec demo/fixed.json --out /tmp/dshv-smoke"
+    "ci": "npm test && node bin/verify.mjs --spec demo/fixed.json --out /tmp/dshv-ci-fixed && node scripts/check-buggy.mjs",
+    "prepublishOnly": "npm run ci && node scripts/smoke-pack.mjs",
+    "smoke": "npm run ci && node scripts/smoke-pack.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.1",

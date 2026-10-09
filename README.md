@@ -2,8 +2,8 @@
 
 [中文](README.zh.md) | English
 
-> **Witness** — The browser is the judge.
-> The quality gate for agent-built web apps. Agents say done; the browser proves it.
+> **Witness** — Check the behavior your browser spec describes.
+> Browser assertions can expose some implementation gaps; they do not prove an app is complete or independently reviewed.
 > *(Witness is the product name; `dsh-verify` is the package name — same thing.)*
 
 [![ci](https://github.com/263311487-ux/dsh-verify/actions/workflows/ci.yml/badge.svg)](https://github.com/263311487-ux/dsh-verify/actions/workflows/ci.yml)
@@ -21,19 +21,15 @@
 
 ## First success — no API key
 
-Requires Node.js 18+ and a one-time Chromium download. From an empty working directory:
+Requires Node.js 20+ and a one-time Chromium download. Until version 0.9.5 appears on npm, run from a clone checkout:
 
 ```bash
-# Until 0.9.5 is on npm, build a local tarball from a checkout:
 git clone https://github.com/263311487-ux/dsh-verify && cd dsh-verify
-npm install && npm pack
-mkdir /tmp/dsh-verify-starter-run && cd /tmp/dsh-verify-starter-run
-# Replace /path/to with the absolute path to the cloned checkout.
-npm install --save-dev /path/to/dsh-verify/dsh-verify-0.9.5.tgz
-# After 0.9.5 is published, use: npm install --save-dev dsh-verify@0.9.5
+npm ci
+npm link
+npx playwright install chromium
 npx dsh-verify init
 cd dsh-verify-starter
-npx playwright install chromium
 npx dsh-verify --spec dsh-verify.spec.json
 # PASS (5/5), exit 0 -> dsh-verify-out/report.html
 npx dsh-verify --spec dsh-verify.fail.json --out failed-report
@@ -129,8 +125,8 @@ npx dsh-verify --spec 'specs/*.json'
 
 ## What's in the box
 
-- **Deterministic judge** — a real headless Chromium (or Firefox / WebKit) executes human-style checks: click, fill, text, classes, **computed styles**, URLs, console errors, network errors, pixels.
-- **Receipts, not vibes** — every run emits an HTML report with adjacent screenshot and red-highlighted diff images; `--json` for machines; exit `0`/`1` for CI.
+- **Deterministic assertions** — Chromium, Firefox, or WebKit executes supplied checks: click, fill, text, classes, computed styles, URLs, console/network errors, and pixels. Coverage depends on the spec and browser.
+- **Inspectable reports** — HTML results accompany screenshot and difference image files when those actions run; `--json` is available for CI; assertion FAIL exits 1 and input/runtime errors are distinct nonzero failures.
 - **Visual regression** — screenshot baselines, pixel-diff with thresholds (`expect_screenshot`), refresh with `--update-baselines`.
 - **AI-drafted checklists** — `dsh-verify gen --url ... --prompt "..."` learns the page in a real browser, has an LLM draft the checklist, then executes it deterministically. The AI drafts; it never judges.
 - **Multi-browser** — `chromium` | `firefox` | `webkit` per spec or `--browser`.
@@ -203,13 +199,13 @@ See [docs/ARENA.md](docs/ARENA.md) — methodology, the tasks, and how to run yo
 
 ## Badge your agent-built app
 
-Built something with an AI agent? Prove it in a real browser and show the world:
+The following static image is illustrative only. It is not bound to a particular app, commit, spec, or successful run:
 
 ```markdown
 [![agent deliverable: browser-verified](https://img.shields.io/badge/agent_deliverable-browser_verified-brightgreen?logo=playwright&logoColor=white)](https://github.com/263311487-ux/dsh-verify)
 ```
 
-Add a spec, wire the GitHub Action, and the badge is earned, not claimed. See [docs/verified-badge.md](docs/verified-badge.md).
+For a result tied to a specific build, publish the commit, spec, action run, verdict, and report together. See [docs/verified-badge.md](docs/verified-badge.md).
 
 ## Roadmap
 

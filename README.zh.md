@@ -18,19 +18,15 @@
 
 ## 首次成功：无需 API key
 
-需要 Node.js 18+，首次需下载 Chromium。在一个空工作目录执行：
+需要 Node.js 20+，首次需下载 Chromium。0.9.5 上 npm 前，从 clone 的本地候选分支运行：
 
 ```bash
-# 0.9.5 尚未上 npm 时，先从源码 checkout 打本地包：
 git clone https://github.com/263311487-ux/dsh-verify && cd dsh-verify
-npm install && npm pack
-mkdir /tmp/dsh-verify-starter-run && cd /tmp/dsh-verify-starter-run
-# 将 /path/to 替换成你克隆仓库的绝对路径。
-npm install --save-dev /path/to/dsh-verify/dsh-verify-0.9.5.tgz
-# 0.9.5 发布后可改用：npm install --save-dev dsh-verify@0.9.5
+npm ci
+npm link
+npx playwright install chromium
 npx dsh-verify init
 cd dsh-verify-starter
-npx playwright install chromium
 npx dsh-verify --spec dsh-verify.spec.json
 # PASS (5/5)，退出码 0 -> dsh-verify-out/report.html
 npx dsh-verify --spec dsh-verify.fail.json --out failed-report
