@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.6 — 2026-10-09
+
+Fix the isolated package smoke check to install Chromium for the Playwright version resolved by the consumer. This avoids using a browser revision downloaded for the source lockfile. The runtime browser assertions and starter behavior are unchanged.
+
 ## 0.9.5 — prepared, not yet published
 
 - Add a safe, local-only `dsh-verify init` starter with a runnable zero-key browser check and an intentional failure fixture.

@@ -1,6 +1,6 @@
 {
   "name": "dsh-verify",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "description": "Witness — browser acceptance checks for agent-built web apps. CLI, MCP, AI-drafted checklists, visual regression, and multi-browser reports.",
   "keywords": [
     "deepseek",
