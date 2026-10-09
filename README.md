@@ -21,7 +21,7 @@
 
 ## First success — no API key
 
-Requires Node.js 20+ and a one-time Chromium download. Until version 0.9.5 appears on npm, run from a clone checkout:
+Requires Node.js 20+ and a one-time Chromium download. npm 0.9.5 was published on 2026-10-09: install with `npm install --save-dev dsh-verify@0.9.5`, then run `npx dsh-verify init`. Alternatively, run from a clone checkout:
 
 ```bash
 git clone https://github.com/263311487-ux/dsh-verify && cd dsh-verify

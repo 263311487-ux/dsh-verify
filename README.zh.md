@@ -18,7 +18,7 @@
 
 ## 首次成功：无需 API key
 
-需要 Node.js 20+，首次需下载 Chromium。0.9.5 上 npm 前，从 clone 的本地候选分支运行：
+需要 Node.js 20+，首次需下载 Chromium。0.9.5 已于 2026-10-09 发布：`npm install --save-dev dsh-verify@0.9.5` 后运行 `npx dsh-verify init`。也可从源码运行：
 
 ```bash
 git clone https://github.com/263311487-ux/dsh-verify && cd dsh-verify
