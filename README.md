@@ -28,6 +28,7 @@ Requires Node.js 18+ and a one-time Chromium download. From an empty working dir
 git clone https://github.com/263311487-ux/dsh-verify && cd dsh-verify
 npm install && npm pack
 mkdir /tmp/dsh-verify-starter-run && cd /tmp/dsh-verify-starter-run
+# Replace /path/to with the absolute path to the cloned checkout.
 npm install --save-dev /path/to/dsh-verify/dsh-verify-0.9.5.tgz
 # After 0.9.5 is published, use: npm install --save-dev dsh-verify@0.9.5
 npx dsh-verify init
@@ -118,7 +119,7 @@ The repo dogfoods it: the [dogfood workflow](.github/workflows/dogfood.yml) asse
 ### On the command line
 
 ```bash
-npm install -g dsh-verify          # or: npx dsh-verify (after v0.9.5 is published)
+npm install -g dsh-verify          # or: npx dsh-verify after v0.9.5 is published
 npx playwright install chromium    # one-time browser download
 npx dsh-verify --spec 'specs/*.json'
 # [PASS] specs/home.json (5/5)
@@ -129,7 +130,7 @@ npx dsh-verify --spec 'specs/*.json'
 ## What's in the box
 
 - **Deterministic judge** — a real headless Chromium (or Firefox / WebKit) executes human-style checks: click, fill, text, classes, **computed styles**, URLs, console errors, network errors, pixels.
-- **Receipts, not vibes** — every run emits a HTML report with adjacent image files with screenshots and red-highlighted diff images; `--json` for machines; exit `0`/`1` for CI.
+- **Receipts, not vibes** — every run emits an HTML report with adjacent screenshot and red-highlighted diff images; `--json` for machines; exit `0`/`1` for CI.
 - **Visual regression** — screenshot baselines, pixel-diff with thresholds (`expect_screenshot`), refresh with `--update-baselines`.
 - **AI-drafted checklists** — `dsh-verify gen --url ... --prompt "..."` learns the page in a real browser, has an LLM draft the checklist, then executes it deterministically. The AI drafts; it never judges.
 - **Multi-browser** — `chromium` | `firefox` | `webkit` per spec or `--browser`.
@@ -159,7 +160,7 @@ Top-level fields: `title`, `serve` (static dir) or `base` (target URL), `browser
 
 ## The report
 
-A HTML report with adjacent image files — every step with a pass/fail badge, selector, and detail, plus screenshots:
+An HTML report with adjacent image files — every step with a pass/fail badge, selector, and detail, plus screenshots:
 
 ![dsh-verify report](assets/report-screenshot.png)
 

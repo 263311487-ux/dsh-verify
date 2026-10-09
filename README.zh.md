@@ -25,6 +25,7 @@
 git clone https://github.com/263311487-ux/dsh-verify && cd dsh-verify
 npm install && npm pack
 mkdir /tmp/dsh-verify-starter-run && cd /tmp/dsh-verify-starter-run
+# 将 /path/to 替换成你克隆仓库的绝对路径。
 npm install --save-dev /path/to/dsh-verify/dsh-verify-0.9.5.tgz
 # 0.9.5 发布后可改用：npm install --save-dev dsh-verify@0.9.5
 npx dsh-verify init
