@@ -21,7 +21,12 @@
 需要 Node.js 18+，首次需下载 Chromium。在一个空工作目录执行：
 
 ```bash
-npm install --save-dev dsh-verify@0.9.5
+# 0.9.5 尚未上 npm 时，先从源码 checkout 打本地包：
+git clone https://github.com/263311487-ux/dsh-verify && cd dsh-verify
+npm install && npm pack
+mkdir /tmp/dsh-verify-starter-run && cd /tmp/dsh-verify-starter-run
+npm install --save-dev /path/to/dsh-verify/dsh-verify-0.9.5.tgz
+# 0.9.5 发布后可改用：npm install --save-dev dsh-verify@0.9.5
 npx dsh-verify init
 cd dsh-verify-starter
 npx playwright install chromium
@@ -33,7 +38,7 @@ npx dsh-verify --spec dsh-verify.fail.json --out failed-report
 
 打开 HTML 报告时保留同级 PNG 图片。失败清单故意断言错误文字，可直接检查断言与截图；另有[缺失 CSS 的失败报告](evidence/buggy-report.html)。
 
-`init [目录]` 只在新目录内写入本地网页和两份 JSON 清单，不调用模型、不启动浏览器、不下载资源。父目录必须存在；目标路径如已存在（包括空目录、文件、符号链接）会拒绝，不提供强制覆盖选项。首次安装包和浏览器需要联网，两份示例仅访问本机。`gen` 与 MCP `generate_and_verify` 是另行启用、需要模型 key 的功能。
+`init [目录]` 只在新目录内写入本地网页和两份 JSON 清单，不调用模型、不启动浏览器、不下载资源。父目录必须存在；目标路径如已存在（包括空目录、文件、符号链接）会拒绝，不提供强制覆盖选项。从 GitHub 安装项目和首次下载浏览器需要联网，两份示例仅访问本机。`gen` 与 MCP `generate_and_verify` 是另行启用、需要模型 key 的功能。
 
 验收自己的应用时编辑步骤；静态文件用 `serve`，已有网址用 `base`。`serve` 相对于执行命令的当前目录，不是清单所在目录。PASS 仅表示本次浏览器运行中所写断言通过，不证明需求全覆盖、安全、无障碍或规范作者独立。网页与规范可能出自同一 agent，需要独立性时应另行审核规范。报告保存断言细节与明确请求的截图，不是完整审计轨迹。
 

@@ -84,8 +84,8 @@ footer a { color:#8b949e; }
   <h1>Agents say done.<br><span class="dim">The browser proves it.</span></h1>
   <p class="tagline">The quality gate for <b>agent-built web apps</b>.<br>One command: a real browser clicks, types, and returns <b>PASS</b>/<b>FAIL</b> with receipts.</p>
   <div class="heroimg"><img src="assets/hero.gif" alt="dsh-verify runs real-browser acceptance checks and prints PASS/FAIL verdicts"></div>
-  <div class="install"><pre><span class="prompt">$ </span><span class="cmd">npx dsh-verify --spec demo/fixed.json</span>
-dsh-verify: <span class="ok">PASS</span> (6/6) — real Chromium · 2.1s · report → report.html</pre></div>
+  <div class="install"><pre><span class="prompt">$ </span><span class="cmd">npx dsh-verify init</span>
+Created zero-key starter. Run it locally; no API key needed.</pre></div>
   <div class="cta">
     <a class="btn" href="https://github.com/263311487-ux/dsh-verify#readme">Get started</a>
     <a class="btn ghost" href="https://www.npmjs.com/package/dsh-verify">npm package</a>
@@ -101,7 +101,7 @@ dsh-verify: <span class="ok">PASS</span> (6/6) — real Chromium · 2.1s · repo
     <div class="card"><h3>demo/fixed — what a real browser says</h3><div class="verdict pass">FAIL → PASS</div><p>Same page, same JS. One missing CSS rule. The agent's self-review passed; a real browser caught it.</p></div>
   </div>
   <figure class="imgfig"><img src="assets/wow-compare.png" alt="Same task, same AI, two builds — only a real browser tells the difference"><figcaption>Same task. Same AI. Two builds. Only a real browser tells the difference.</figcaption></figure>
-  <div class="quote"><b>Agents verify against what they believe they built — not against what a user actually experiences.</b> Unit tests and static checks can't catch a missing CSS rule. dsh-verify re-grades the homework in a real browser.</div>
+  <div class="quote"><b>Agents verify against what they believe they built — not against what a user actually experiences.</b> A browser check can cover rendered behavior that existing checks may miss. dsh-verify re-grades the homework in a real browser.</div>
 </div>
 
 <hr class="rule"><div class="wrap" id="ways">
@@ -116,7 +116,7 @@ dsh-verify: <span class="ok">PASS</span> (6/6) — real Chromium · 2.1s · repo
 
 <hr class="rule"><div class="wrap" id="proof">
   <h2>Receipts, not opinions</h2>
-  <p class="sec-sub">Every run produces a self-contained HTML report with per-step results, screenshots and visual diffs.</p>
+  <p class="sec-sub">Each run produces an HTML report with per-step results and adjacent screenshot and diff images. Keep the images beside the report when sharing it.</p>
   <figure class="imgfig"><img src="assets/report-screenshot.png" alt="dsh-verify HTML report with per-step PASS/FAIL and screenshots"><figcaption>Self-contained HTML report — per-step results, screenshots, pass/fail badges.</figcaption></figure>
 </div>
 

@@ -24,7 +24,12 @@
 Requires Node.js 18+ and a one-time Chromium download. From an empty working directory:
 
 ```bash
-npm install --save-dev dsh-verify@0.9.5
+# Until 0.9.5 is on npm, build a local tarball from a checkout:
+git clone https://github.com/263311487-ux/dsh-verify && cd dsh-verify
+npm install && npm pack
+mkdir /tmp/dsh-verify-starter-run && cd /tmp/dsh-verify-starter-run
+npm install --save-dev /path/to/dsh-verify/dsh-verify-0.9.5.tgz
+# After 0.9.5 is published, use: npm install --save-dev dsh-verify@0.9.5
 npx dsh-verify init
 cd dsh-verify-starter
 npx playwright install chromium
@@ -36,7 +41,7 @@ npx dsh-verify --spec dsh-verify.fail.json --out failed-report
 
 Open either HTML report with its adjacent PNG file. The failing spec deliberately expects wrong text; inspect the assertion and screenshot. [Existing missing-CSS failure report](evidence/buggy-report.html) is another inspectable example.
 
-`init [directory]` only writes a local fixture and two JSON specs. It never calls an LLM, launches a browser, or downloads anything. The destination must be new (its parent must exist); existing directories, files, and symlinks are refused without changes. No force/overwrite option. Package and browser installation require internet; these starter checks use localhost only. `gen` and MCP `generate_and_verify` are optional, separate features that require an LLM key.
+`init [directory]` only writes a local fixture and two JSON specs. It never calls an LLM, launches a browser, or downloads anything. The destination must be new (its parent must exist); existing directories, files, and symlinks are refused without changes. No force/overwrite option. GitHub package and browser installation require internet; these starter checks use localhost only. `gen` and MCP `generate_and_verify` are optional, separate features that require an LLM key.
 
 To check your own app, edit the JSON steps; keep `serve` for static files or use `base` for an existing URL. `serve` paths resolve from the command's current directory, not the spec file. A PASS applies only to the supplied checks in that run; it does not establish complete coverage, security, accessibility, or independent authorship. The app and spec may come from the same agent; review the spec separately when independence matters. Reports retain assertion details and explicitly requested screenshots, not a complete audit trail.
 
@@ -113,7 +118,7 @@ The repo dogfoods it: the [dogfood workflow](.github/workflows/dogfood.yml) asse
 ### On the command line
 
 ```bash
-npm install -g dsh-verify          # or: npx dsh-verify
+npm install -g dsh-verify          # or: npx dsh-verify (after v0.9.5 is published)
 npx playwright install chromium    # one-time browser download
 npx dsh-verify --spec 'specs/*.json'
 # [PASS] specs/home.json (5/5)
