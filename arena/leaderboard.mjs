@@ -24,10 +24,12 @@ const cells = {}; // "model/strategy/task" -> {pass, total, fails:[]}
 const submitters = {}; // "model/strategy" -> github handle
 for (const r of records) {
   const key = `${r.model}/${r.strategy}/${r.task}`;
-  cells[key] = cells[key] || { pass: 0, total: 0, fails: [] };
+  cells[key] = cells[key] || { pass: 0, total: 0, graded: 0, errors: 0, fails: [] };
   cells[key].total++;
   if (r.final.verdict === "PASS") cells[key].pass++;
+  else if (r.final.verdict === "ERROR") cells[key].errors++;
   else cells[key].fails.push(r);
+  if (r.final.verdict !== "ERROR") cells[key].graded++;
   if (r.submitter) submitters[`${r.model}/${r.strategy}`] = r.submitter;
 }
 
@@ -35,21 +37,23 @@ const setups = [...new Set(Object.keys(cells).map(k => k.split("/").slice(0, 2).
 function cellHtml(model, strategy, task) {
   const c = cells[`${model}/${strategy}/${task}`];
   if (!c) return `<td class="na">—</td>`;
-  const cls = c.pass === c.total ? "pass" : c.pass === 0 ? "fail" : "mixed";
-  return `<td class="${cls}"><b>${c.pass}/${c.total}</b></td>`;
+  const cls = c.pass === c.graded ? "pass" : c.pass === 0 ? "fail" : "mixed";
+  return `<td class="${cls}" title="${c.errors} runner errors excluded from browser verdicts"><b>${c.pass}/${c.graded}</b>${c.errors ? `<small> + ${c.errors} ERROR</small>` : ""}</td>`;
 }
 const rows = setups.map(key => {
   const [model, strategy] = key.split("/");
-  let pass = 0, total = 0;
-  for (const t of tasks) { const c = cells[`${model}/${strategy}/${t}`]; if (c) { pass += c.pass; total += c.total; } }
+  let pass = 0;
+  for (const t of tasks) { const c = cells[`${model}/${strategy}/${t}`]; if (c) pass += c.pass; }
   const sub = submitters[key];
   const subCell = sub ? `<td class="dim">@${sub}</td>` : `<td class="dim">—</td>`;
-  return `<tr><td class="setup"><span class="model">${MODEL_DISPLAY[model] || model}</span><span class="strat">${STRAT_DISPLAY[strategy] || strategy}</span></td>${tasks.map(t => cellHtml(model, strategy, t)).join("")}<td class="sum">${pass}/${total}</td>${subCell}</tr>`;
+  let graded = 0, errors = 0;
+  for (const t of tasks) { const c = cells[`${model}/${strategy}/${t}`]; if (c) { graded += c.graded; errors += c.errors; } }
+  return `<tr><td class="setup"><span class="model">${MODEL_DISPLAY[model] || model}</span><span class="strat">${STRAT_DISPLAY[strategy] || strategy}</span></td>${tasks.map(t => cellHtml(model, strategy, t)).join("")}<td class="sum">${pass}/${graded}${errors ? `<small> + ${errors} ERROR</small>` : ""}</td>${subCell}</tr>`;
 }).join("");
 
-let totalPass = 0, total = 0;
-for (const c of Object.values(cells)) { totalPass += c.pass; total += c.total; }
-const runsPerCell = Math.round(total / Object.keys(cells).length);
+let totalPass = 0, total = 0, totalGraded = 0, totalErrors = 0;
+for (const c of Object.values(cells)) { totalPass += c.pass; total += c.total; totalGraded += c.graded; totalErrors += c.errors; }
+const recordsPerCell = Math.round(total / Object.keys(cells).length);
 const generatedAt = new Date().toISOString().replace("T", " ").slice(0, 16) + " UTC";
 
 // Per-task plain-language explanation of what failed, for the evidence cards.
@@ -80,7 +84,7 @@ function agg(model, strategy) {
   let p = 0, t = 0;
   for (const [k, c] of Object.entries(cells)) {
     const [m, s] = k.split("/");
-    if (m === model && s === strategy) { p += c.pass; t += c.total; }
+    if (m === model && s === strategy) { p += c.pass; t += c.graded; }
   }
   return `${p}/${t}`;
 }
@@ -103,12 +107,12 @@ const html = `<!doctype html><html lang="en"><head>
 <meta name="description" content="48 historical records across 4 agent setups and 3 tasks. No LLM judges — a real browser clicks, types and grades. See where agents actually failed.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Agent Arena — can AI agents ship working web apps?">
-<meta property="og:description" content="${totalPass}/${total} runs passed real-browser acceptance checks. Open entry — bring your own agent and appear on the board. The browser is the judge.">
+<meta property="og:description" content="${totalPass}/${totalGraded} browser-verdict runs passed; ${totalErrors} runner errors among ${total} records. Open entry after review.">
 <meta property="og:url" content="${BASE_URL}/arena/">
 <meta property="og:image" content="${BASE_URL}/assets/wow-compare.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Agent Arena — can AI agents ship working web apps?">
-<meta name="twitter:description" content="${totalPass}/${total} runs passed real-browser acceptance checks. No LLM judges.">
+<meta name="twitter:description" content="${totalPass}/${totalGraded} browser-verdict runs passed; ${totalErrors} runner errors among ${total} historical records.">
 <style>
 :root { color-scheme: dark; }
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -158,18 +162,18 @@ a { color:#58a6ff; text-decoration:none; } a:hover { text-decoration:underline; 
 <div class="sub">Can AI agents ship <i>working</i> web apps? Graded by <a href="https://github.com/263311487-ux/dsh-verify">dsh-verify</a> in a real browser. No LLM judges — the browser is the judge.</div>
 <hr class="rule">
 <div class="headline">
-<div class="bignum">${totalPass}/${total}</div>
-<p>runs passed the real-browser acceptance checks — ${runsPerCell} records per setup/task cell; historical runs August 17-18, 2026 UTC; page generated ${generatedAt}.</p>
+<div class="bignum">${totalPass}/${totalGraded}</div>
+<p>browser-verdict runs passed; ${totalErrors} runner errors excluded — ${total} total records (${recordsPerCell} per setup/task cell), historical runs August 17-18, 2026 UTC; page generated ${generatedAt}.</p>
 </div>
 <div class="enter"><b>Bring your own agent.</b> Run your model on the same 3 tasks with the same human checks, then submit the results for maintainer review before inclusion. <a href="https://github.com/263311487-ux/dsh-verify/blob/main/docs/ARENA.md">How to enter →</a></div>
 <table>
-<thead><tr><th>Agent setup</th><th>${TASK_NAMES.todo}</th><th>${TASK_NAMES.pricing}</th><th>${TASK_NAMES.form}</th><th>Pass</th><th>Submitted by</th></tr></thead>
+<thead><tr><th>Agent setup</th><th>${TASK_NAMES.todo}</th><th>${TASK_NAMES.pricing}</th><th>${TASK_NAMES.form}</th><th>PASS / graded</th><th>Submitted by</th></tr></thead>
 <tbody>${rows}</tbody>
 </table>
 <div class="hl">${flashTodoLine} Agents self-report success; real browsers tell the truth.</div>
 
 <h2>Where agents actually failed</h2>
-<p class="meta">Committed summaries report 2 FAIL and 2 ERROR. Generated apps, model replies, and local report files are not committed; exact historical reproduction is unavailable. ERROR is a runner failure, not a browser verdict.</p>
+<p class="meta">${totalPass}/${totalGraded} browser-verdict runs passed. Committed summaries also report 2 FAIL and ${totalErrors} ERROR; errors are runner failures excluded from browser-verdict denominators. Generated apps, model replies, and local report files are not committed; exact historical reproduction is unavailable.</p>
 <div class="cards">${evidenceCards}</div>
 
 <h2>What this sample can tell us</h2>
@@ -179,7 +183,7 @@ a { color:#58a6ff; text-decoration:none; } a:hover { text-decoration:underline; 
 <ul class="method">
 <li>Every setup gets the <b>same task prompt</b>, the same spec of human checks, the same temperature (0.7), with up to two additional repair rounds for self-check; compute budgets differ.</li>
 <li>Grading is <b>deterministic</b>: a real headless Chromium clicks, types, reads computed styles and localStorage. No LLM grades the outcome.</li>
-<li>Each cell is run <b>${runsPerCell}×</b> because LLM output is nondeterministic — a single run can flip.</li>
+<li>Each setup/task cell has <b>${recordsPerCell} records</b>; ERROR records are excluded from PASS denominators.</li>
 <li>Tasks and specs live in <code>arena/tasks/</code>; raw per-run results in <code>arena/results/</code>.</li>
 </ul>
 <h2>Run your own agent</h2>
@@ -194,4 +198,4 @@ node arena/leaderboard.mjs   # regenerate this page</pre>
 
 await writeFile(join(outDir, "index.html"), html);
 await writeFile(join(outDir, "data.json"), JSON.stringify(records, null, 2));
-console.log(`docs/arena/index.html written (${totalPass}/${total} across ${Object.keys(cells).length} cells, ${records.filter(r => r.final.verdict !== "PASS").length} failures)`);
+console.log(`docs/arena/index.html written (${totalPass}/${totalGraded} browser verdicts, ${totalErrors} runner errors, ${Object.keys(cells).length} cells)`);

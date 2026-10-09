@@ -4,12 +4,12 @@
 <meta name="description" content="48 historical records across 4 agent setups and 3 tasks. No LLM judges — a real browser clicks, types and grades. See where agents actually failed.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Agent Arena — can AI agents ship working web apps?">
-<meta property="og:description" content="44/48 runs passed real-browser acceptance checks. Open entry — bring your own agent and appear on the board. The browser is the judge.">
+<meta property="og:description" content="44/46 browser-verdict runs passed; 2 runner errors among 48 records. Open entry after review.">
 <meta property="og:url" content="https://263311487-ux.github.io/dsh-verify/arena/">
 <meta property="og:image" content="https://263311487-ux.github.io/dsh-verify/assets/wow-compare.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Agent Arena — can AI agents ship working web apps?">
-<meta name="twitter:description" content="44/48 runs passed real-browser acceptance checks. No LLM judges.">
+<meta name="twitter:description" content="44/46 browser-verdict runs passed; 2 runner errors among 48 historical records.">
 <style>
 :root { color-scheme: dark; }
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -59,18 +59,18 @@ a { color:#58a6ff; text-decoration:none; } a:hover { text-decoration:underline; 
 <div class="sub">Can AI agents ship <i>working</i> web apps? Graded by <a href="https://github.com/263311487-ux/dsh-verify">dsh-verify</a> in a real browser. No LLM judges — the browser is the judge.</div>
 <hr class="rule">
 <div class="headline">
-<div class="bignum">44/48</div>
-<p>runs passed the real-browser acceptance checks — 4 records per setup/task cell; historical runs August 17-18, 2026 UTC; page generated 2026-10-08 14:54 UTC.</p>
+<div class="bignum">44/46</div>
+<p>browser-verdict runs passed; 2 runner errors excluded — 48 total records (4 per setup/task cell), historical runs August 17-18, 2026 UTC; page generated 2026-10-09 05:28 UTC.</p>
 </div>
 <div class="enter"><b>Bring your own agent.</b> Run your model on the same 3 tasks with the same human checks, then submit the results for maintainer review before inclusion. <a href="https://github.com/263311487-ux/dsh-verify/blob/main/docs/ARENA.md">How to enter →</a></div>
 <table>
-<thead><tr><th>Agent setup</th><th>Todo app</th><th>Pricing calculator</th><th>Signup form</th><th>Pass</th><th>Submitted by</th></tr></thead>
-<tbody><tr><td class="setup"><span class="model">DeepSeek v4-flash</span><span class="strat">self-check loop</span></td><td class="pass"><b>4/4</b></td><td class="mixed"><b>3/4</b></td><td class="pass"><b>4/4</b></td><td class="sum">11/12</td><td class="dim">—</td></tr><tr><td class="setup"><span class="model">DeepSeek v4-flash</span><span class="strat">single shot</span></td><td class="mixed"><b>3/4</b></td><td class="pass"><b>4/4</b></td><td class="pass"><b>4/4</b></td><td class="sum">11/12</td><td class="dim">—</td></tr><tr><td class="setup"><span class="model">DeepSeek v4-pro</span><span class="strat">self-check loop</span></td><td class="pass"><b>4/4</b></td><td class="pass"><b>4/4</b></td><td class="pass"><b>4/4</b></td><td class="sum">12/12</td><td class="dim">—</td></tr><tr><td class="setup"><span class="model">DeepSeek v4-pro</span><span class="strat">single shot</span></td><td class="mixed"><b>3/4</b></td><td class="mixed"><b>3/4</b></td><td class="pass"><b>4/4</b></td><td class="sum">10/12</td><td class="dim">—</td></tr></tbody>
+<thead><tr><th>Agent setup</th><th>Todo app</th><th>Pricing calculator</th><th>Signup form</th><th>PASS / graded</th><th>Submitted by</th></tr></thead>
+<tbody><tr><td class="setup"><span class="model">DeepSeek v4-flash</span><span class="strat">self-check loop</span></td><td class="pass" title="0 runner errors excluded from browser verdicts"><b>4/4</b></td><td class="pass" title="1 runner errors excluded from browser verdicts"><b>3/3</b><small> + 1 ERROR</small></td><td class="pass" title="0 runner errors excluded from browser verdicts"><b>4/4</b></td><td class="sum">11/11<small> + 1 ERROR</small></td><td class="dim">—</td></tr><tr><td class="setup"><span class="model">DeepSeek v4-flash</span><span class="strat">single shot</span></td><td class="mixed" title="0 runner errors excluded from browser verdicts"><b>3/4</b></td><td class="pass" title="0 runner errors excluded from browser verdicts"><b>4/4</b></td><td class="pass" title="0 runner errors excluded from browser verdicts"><b>4/4</b></td><td class="sum">11/12</td><td class="dim">—</td></tr><tr><td class="setup"><span class="model">DeepSeek v4-pro</span><span class="strat">self-check loop</span></td><td class="pass" title="0 runner errors excluded from browser verdicts"><b>4/4</b></td><td class="pass" title="0 runner errors excluded from browser verdicts"><b>4/4</b></td><td class="pass" title="0 runner errors excluded from browser verdicts"><b>4/4</b></td><td class="sum">12/12</td><td class="dim">—</td></tr><tr><td class="setup"><span class="model">DeepSeek v4-pro</span><span class="strat">single shot</span></td><td class="mixed" title="0 runner errors excluded from browser verdicts"><b>3/4</b></td><td class="pass" title="1 runner errors excluded from browser verdicts"><b>3/3</b><small> + 1 ERROR</small></td><td class="pass" title="0 runner errors excluded from browser verdicts"><b>4/4</b></td><td class="sum">10/11<small> + 1 ERROR</small></td><td class="dim">—</td></tr></tbody>
 </table>
 <div class="hl">DeepSeek v4-flash single-shot passed the todo task <b>3/4</b> runs; with a real-browser self-check loop it passed <b>4/4</b>. Agents self-report success; real browsers tell the truth.</div>
 
 <h2>Where agents actually failed</h2>
-<p class="meta">Committed summaries report 2 FAIL and 2 ERROR. Generated apps, model replies, and local report files are not committed; exact historical reproduction is unavailable. ERROR is a runner failure, not a browser verdict.</p>
+<p class="meta">44/46 browser-verdict runs passed. Committed summaries also report 2 FAIL and 2 ERROR; errors are runner failures excluded from browser-verdict denominators. Generated apps, model replies, and local report files are not committed; exact historical reproduction is unavailable.</p>
 <div class="cards"><div class="card"><div class="card-top"><span class="badge err">ERROR</span><span class="card-title">DeepSeek v4-flash · self-check loop · Pricing calculator</span></div><p class="card-body">The runner could not parse the verification result (<code>"undefined" is not valid JSON</code>) — the record contains no usable browser verdict.<span class="dim"> <b>0/0</b> checks passed</span></p></div>
 <div class="card"><div class="card-top"><span class="badge fail">FAIL</span><span class="card-title">DeepSeek v4-flash · single shot · Todo app</span></div><p class="card-body">The browser reported <code>expect_text #remaining: got "0 remaining"</code> — the app opened but required seed todos never appeared in the page — the browser saw an empty list.<span class="dim"> <b>9/19</b> checks passed</span></p></div>
 <div class="card"><div class="card-top"><span class="badge err">ERROR</span><span class="card-title">DeepSeek v4-pro · single shot · Pricing calculator</span></div><p class="card-body">The runner could not parse the verification result (<code>"undefined" is not valid JSON</code>) — the record contains no usable browser verdict.<span class="dim"> <b>0/0</b> checks passed</span></p></div>
@@ -83,7 +83,7 @@ a { color:#58a6ff; text-decoration:none; } a:hover { text-decoration:underline; 
 <ul class="method">
 <li>Every setup gets the <b>same task prompt</b>, the same spec of human checks, the same temperature (0.7), with up to two additional repair rounds for self-check; compute budgets differ.</li>
 <li>Grading is <b>deterministic</b>: a real headless Chromium clicks, types, reads computed styles and localStorage. No LLM grades the outcome.</li>
-<li>Each cell is run <b>4×</b> because LLM output is nondeterministic — a single run can flip.</li>
+<li>Each setup/task cell has <b>4 records</b>; ERROR records are excluded from PASS denominators.</li>
 <li>Tasks and specs live in <code>arena/tasks/</code>; raw per-run results in <code>arena/results/</code>.</li>
 </ul>
 <h2>Run your own agent</h2>

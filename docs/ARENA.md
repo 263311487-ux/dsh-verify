@@ -7,7 +7,7 @@ Live leaderboard: <https://263311487-ux.github.io/dsh-verify/arena/>
 ## Snapshot provenance and limits (documentation revision: 2026-10-08)
 
 - Dataset: the 48 committed JSON records in arena/results, mirrored in docs/arena/data.json. Their timestamps span 2026-08-17–18 UTC, not August 19.
-- Sample: two recorded model labels × two strategies × three static tasks × four records per cell. Totals: 44 PASS, 2 FAIL, 2 ERROR. ERROR includes runner failures and is not a browser verdict.
+- Sample: two recorded model labels × two strategies × three static tasks × four records per cell. Totals: 44 PASS, 2 FAIL, 2 ERROR. Among the 46 records with a browser verdict, 44 passed and 2 failed; ERROR records are runner failures and are excluded from that denominator.
 - Version: this documentation accompanies dsh-verify 0.9.5. The historical records do not capture verifier, dependency, browser, or exact provider model versions. Do not label these as 0.9.5 benchmark results.
 - Evidence: committed JSON contains summaries and local report paths. Generated apps, model replies, and report files stayed in ignored arena/work; those absolute paths are not public evidence links. The repository alone cannot reproduce the original failures exactly.
 - Interpretation: self-check allows up to two extra repair rounds, so budgets differ. This tiny task-specific sample does not establish general model reliability, price efficiency, statistical significance, or superiority over another evaluation tool. Model labels were not independently authenticated.
@@ -16,8 +16,8 @@ Live leaderboard: <https://263311487-ux.github.io/dsh-verify/arena/>
 
 | Recorded model label | Single shot | Self-check |
 |---|---|---|
-| deepseek-v4-flash | 11/12 PASS | 11/12 PASS |
-| deepseek-v4-pro | 10/12 PASS | 12/12 PASS |
+| deepseek-v4-flash | 11/12 PASS | 11/11 PASS + 1 ERROR |
+| deepseek-v4-pro | 10/11 PASS + 1 ERROR | 12/12 PASS |
 
 ## The tasks
 
