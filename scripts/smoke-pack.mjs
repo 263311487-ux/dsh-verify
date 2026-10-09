@@ -36,6 +36,9 @@ try {
   run(npm, ['install', '--ignore-scripts', '--no-fund', tarball], { cwd: install });
   const audit = JSON.parse(run(npm, ['audit', '--json'], { cwd: install }));
   if (audit.metadata?.vulnerabilities?.total !== 0) throw new Error('packed consumer dependency audit is not clean');
+  // Consumers resolve their own supported Playwright version. Download that
+  // version's browser, not the source lockfile's potentially older revision.
+  run(process.execPath, [join(install, 'node_modules/playwright/cli.js'), 'install', 'chromium'], { cwd: install });
   const installedBin = join(install, 'node_modules', '.bin', process.platform === 'win32' ? 'dsh-verify.cmd' : 'dsh-verify');
   const starter = join(install, 'dsh-verify-starter');
   run(installedBin, ['init'], { cwd: install });
