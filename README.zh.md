@@ -18,7 +18,7 @@
 
 ## 首次成功：无需 API key
 
-需要 Node.js 20+，首次需下载 Chromium。0.9.5 已于 2026-10-09 发布：`npm install --save-dev dsh-verify@0.9.5` 后运行 `npx dsh-verify init`。也可从源码运行：
+需要 Node.js 20+，首次需下载 Chromium。安装当前 npm 版本 `npm install --save-dev dsh-verify@0.9.6` 后运行 `npx dsh-verify init`。也可从源码运行：
 
 ```bash
 git clone https://github.com/263311487-ux/dsh-verify && cd dsh-verify
@@ -93,7 +93,7 @@ npx dsh-verify --spec spec.json
 
 仓库记录时间为 **2026-08-17–18 UTC**：共 **48 条记录，44 PASS、2 FAIL、2 ERROR**。其中 46 条有浏览器判定：44 条通过、2 条失败；2 条 ERROR 是 runner 错误，不计入浏览器判定分母。记录覆盖两个模型标签 × 两种策略 × 三个静态任务，每格四条。自检策略最多额外修复两轮，计算预算不同，不能据此推断普遍可靠性、性价比或当前模型排名。
 
-模型标签未经独立身份核验；历史记录未锁定验收器及依赖版本，生成网页、模型回复与本机报告未提交，无法仅凭仓库精确复现旧失败。0.9.5 文档整理没有重跑付费模型实验。
+模型标签未经独立身份核验；历史记录未锁定验收器及依赖版本，生成网页、模型回复与本机报告未提交，无法仅凭仓库精确复现旧失败。0.9.5 与 0.9.6 发布均未重跑付费模型实验。
 
 - [Arena 历史看板](https://263311487-ux.github.io/dsh-verify/arena/)
 - [方法、版本与证据限制](docs/ARENA.md)

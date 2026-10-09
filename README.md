@@ -21,7 +21,7 @@
 
 ## First success — no API key
 
-Requires Node.js 20+ and a one-time Chromium download. npm 0.9.5 was published on 2026-10-09: install with `npm install --save-dev dsh-verify@0.9.5`, then run `npx dsh-verify init`. Alternatively, run from a clone checkout:
+Requires Node.js 20+ and a one-time Chromium download. Install the current npm release with `npm install --save-dev dsh-verify@0.9.6`, then run `npx dsh-verify init`. Alternatively, run from a clone checkout:
 
 ```bash
 git clone https://github.com/263311487-ux/dsh-verify && cd dsh-verify
@@ -114,7 +114,7 @@ The repo dogfoods it: the [dogfood workflow](.github/workflows/dogfood.yml) asse
 ### On the command line
 
 ```bash
-npm install -g dsh-verify          # or: npx dsh-verify after v0.9.5 is published
+npm install -g dsh-verify          # or: npx dsh-verify
 npx playwright install chromium    # one-time browser download
 npx dsh-verify --spec 'specs/*.json'
 # [PASS] specs/home.json (5/5)
@@ -191,7 +191,7 @@ The repo's own CI runs exactly that — engine self-tests, then asserts fixed **
 
 Historical snapshot, not a current model ranking. The committed records span **2026-08-17–18 UTC**: **48 records, 44 PASS, 2 FAIL, 2 ERROR**. Among the 46 records with a browser verdict, 44 passed and 2 failed; the two ERROR records are runner failures. The records cover two model labels × two strategies × three static tasks (four records per cell). Self-check allows up to two repair rounds, so compute budgets differ. Model labels are recorded identifiers, not independently verified identities.
 
-Records do not pin historical verifier/dependency versions. Generated apps, model replies, and local report files are not committed, limiting exact reproduction. No new LLM runs were made for the 0.9.5 documentation refresh. See [methodology and limitations](docs/ARENA.md).
+Records do not pin historical verifier/dependency versions. Generated apps, model replies, and local report files are not committed, limiting exact reproduction. No new LLM runs were made for the 0.9.5 or 0.9.6 release. See [methodology and limitations](docs/ARENA.md).
 [![Agent Arena](https://img.shields.io/badge/Agent%20Arena-live-3fb950)](https://263311487-ux.github.io/dsh-verify/arena/)
 
 See [docs/ARENA.md](docs/ARENA.md) — methodology, the tasks, and how to run your own agent.
