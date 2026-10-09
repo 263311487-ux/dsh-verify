@@ -26,13 +26,12 @@ Requires Node.js 20+ and a one-time Chromium download. Until version 0.9.5 appea
 ```bash
 git clone https://github.com/263311487-ux/dsh-verify && cd dsh-verify
 npm ci
-npm link
 npx playwright install chromium
-npx dsh-verify init
+node bin/verify.mjs init
 cd dsh-verify-starter
-npx dsh-verify --spec dsh-verify.spec.json
+node ../bin/verify.mjs --spec dsh-verify.spec.json
 # PASS (5/5), exit 0 -> dsh-verify-out/report.html
-npx dsh-verify --spec dsh-verify.fail.json --out failed-report
+node ../bin/verify.mjs --spec dsh-verify.fail.json --out failed-report
 # Intentional FAIL (4/5), exit 1 -> failed-report/report.html
 ```
 
@@ -126,7 +125,7 @@ npx dsh-verify --spec 'specs/*.json'
 ## What's in the box
 
 - **Deterministic assertions** — Chromium, Firefox, or WebKit executes supplied checks: click, fill, text, classes, computed styles, URLs, console/network errors, and pixels. Coverage depends on the spec and browser.
-- **Inspectable reports** — HTML results accompany screenshot and difference image files when those actions run; `--json` is available for CI; assertion FAIL exits 1 and input/runtime errors are distinct nonzero failures.
+- **Inspectable reports** — HTML results accompany screenshot and difference image files when those actions run; `--json` is available for CI. Exit 1 alone does not distinguish assertion failures from runtime errors; inspect the structured verdict and failed actions as the release checker does.
 - **Visual regression** — screenshot baselines, pixel-diff with thresholds (`expect_screenshot`), refresh with `--update-baselines`.
 - **AI-drafted checklists** — `dsh-verify gen --url ... --prompt "..."` learns the page in a real browser, has an LLM draft the checklist, then executes it deterministically. The AI drafts; it never judges.
 - **Multi-browser** — `chromium` | `firefox` | `webkit` per spec or `--browser`.

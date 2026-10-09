@@ -1,6 +1,6 @@
 # The "browser-verified" badge
 
-Earned, not claimed: an AI agent built your app, and a real browser proved it works.
+A static badge is an illustration, not a certificate. Link a workflow-status badge to your own workflow and publish the tested commit, specification, run and report. A PASS covers the written assertions only.
 
 ## 1. Add a spec
 
@@ -13,6 +13,7 @@ Earned, not claimed: an AI agent built your app, and a real browser proved it wo
   "steps": [
     { "action": "goto", "path": "/" },
     { "action": "expect_text", "selector": "h1", "text": "Hello" },
+    { "action": "capture_style", "selector": "body", "prop": "backgroundColor", "var": "before" },
     { "action": "click", "selector": "#dark-toggle" },
     { "action": "expect_style_changed", "selector": "body", "prop": "backgroundColor", "var": "before" }
   ]
@@ -40,8 +41,8 @@ jobs:
 [![agent deliverable: browser-verified](https://img.shields.io/badge/agent_deliverable-browser_verified-brightgreen?logo=playwright&logoColor=white)](https://github.com/263311487-ux/dsh-verify)
 ```
 
-If the checks ever fail, the badge is a lie — and the red X in CI will say so before anyone clicks it.
+This example image never changes when a test fails. Replace it with your own workflow's status badge if you need a current status indicator; readers should inspect the associated report.
 
 ## Why
 
-Every day, AI agents say "done" and ship apps that don't work. The badge tells the world you are not one of those repos: a real browser opened your app and clicked through the things that matter.
+Recorded browser checks help readers inspect what ran. Neither a badge nor a finite set of assertions establishes complete functionality, accessibility, security or independent review.

@@ -23,13 +23,12 @@
 ```bash
 git clone https://github.com/263311487-ux/dsh-verify && cd dsh-verify
 npm ci
-npm link
 npx playwright install chromium
-npx dsh-verify init
+node bin/verify.mjs init
 cd dsh-verify-starter
-npx dsh-verify --spec dsh-verify.spec.json
+node ../bin/verify.mjs --spec dsh-verify.spec.json
 # PASS (5/5)，退出码 0 -> dsh-verify-out/report.html
-npx dsh-verify --spec dsh-verify.fail.json --out failed-report
+node ../bin/verify.mjs --spec dsh-verify.fail.json --out failed-report
 # 故意失败：FAIL (4/5)，退出码 1 -> failed-report/report.html
 ```
 
