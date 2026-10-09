@@ -9,6 +9,9 @@ const good = JSON.stringify({
 
 test('release checker accepts only a FAIL with the missing-style assertion', () => {
   assert.equal(assertBuggyResult(good), true);
+  const extra=JSON.parse(good);
+  extra.specs[0].failed.push({action:'expect_text',selector:'#message',detail:'unexpected regression'});
+  assert.throws(() => assertBuggyResult(JSON.stringify(extra)));
   assert.throws(() => assertBuggyResult(JSON.stringify({ verdict: 'PASS', specs: [] })), /FAIL/);
   assert.throws(() => assertBuggyResult(JSON.stringify({
     verdict: 'FAIL', specs: [{ verdict: 'FAIL', failed: [{ action: 'expect_text' }] }],

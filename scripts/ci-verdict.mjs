@@ -5,7 +5,8 @@ export function validateExpectedFailure({exitCode, result}) {
     throw new Error('expected a structured FAIL verdict with spec results');
   }
   const failures = result.specs.flatMap(spec => Array.isArray(spec.failed) ? spec.failed : []);
-  if (!failures.some(failure => failure.action === 'expect_style_changed' && failure.selector === '#page')) {
+  if (result.specs.length !== 1 || failures.length !== 1 ||
+      failures[0].action !== 'expect_style_changed' || failures[0].selector !== '#page') {
     throw new Error('expected action expect_style_changed for selector #page to fail');
   }
   return {ok: true};

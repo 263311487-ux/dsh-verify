@@ -13,6 +13,7 @@ export function assertBuggyResult(stdout) {
     throw new Error('buggy demo did not produce a JSON result');
   }
   if (result.verdict !== 'FAIL') throw new Error(`expected FAIL verdict, got ${result.verdict}`);
+  validateExpectedFailure({exitCode:1,result});
   const spec = result.specs?.[0];
   if (spec?.verdict !== 'FAIL') throw new Error(`expected spec FAIL, got ${spec?.verdict}`);
   const failure = spec.failed?.find(item => item.action === 'expect_style_changed' && item.selector === '#page');
