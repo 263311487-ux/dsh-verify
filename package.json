@@ -63,6 +63,7 @@
     "qs": "^6.16.0"
   },
   "license": "MIT",
+  "author": "Bai Xing (白星) <263311487@qq.com>",
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
