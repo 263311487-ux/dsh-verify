@@ -41,7 +41,7 @@ Open either HTML report with its adjacent PNG file. The failing spec deliberatel
 
 To check your own app, edit the JSON steps; keep `serve` for static files or use `base` for an existing URL. `serve` paths resolve from the command's current directory, not the spec file. A PASS applies only to the supplied checks in that run; it does not establish complete coverage, security, accessibility, or independent authorship. The app and spec may come from the same agent; review the spec separately when independence matters. Reports retain assertion details and explicitly requested screenshots, not a complete audit trail.
 
-![dsh-verify — Agents say done. The browser proves it.](assets/social-card.png)
+![dsh-verify — Agents say done. The browser proves it.](assets/social-preview.svg)
 
 ![dsh-verify in action](assets/hero.gif)
 
