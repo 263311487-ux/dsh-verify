@@ -1,0 +1,38 @@
+name: Bug report
+description: A spec ran but the result was wrong, or the tool crashed
+labels: ["bug"]
+body:
+  - type: textarea
+    id: command
+    attributes:
+      label: Command you ran
+      description: The exact command (redact secrets)
+      placeholder: npx dsh-verify --spec my-spec.json
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+      placeholder: PASS with all assertions green
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+      placeholder: FAIL on step 3, expected text "Clicked: 3" but got "Clicked: 2"
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: dsh-verify version
+      placeholder: "0.9.6"
+    validations:
+      required: true
+  - type: textarea
+    id: spec
+    attributes:
+      label: Spec JSON (if relevant)
+      render: json
